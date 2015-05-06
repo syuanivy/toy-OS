@@ -1,0 +1,39 @@
+osOS features v1.01
+
+-------------------------------------------------------------------------------------
+Threads
+-------------------------------------------------------------------------------------
+- Basic Thread support
+- Support the creation of threads (Set the function, nme and thread info)
+- Implementation of the Context Switch.
+- Definition of a static Stack for each thread.
+- Threads run in SYSTEM MODE (SYS_MODE) with the FIQ disable.
+- Basic implementation of a scheduler (Round Robin)
+- Tigh the periodic timer with the Thread tick.
+
+-------------------------------------------------------------------------------------
+Memory system
+-------------------------------------------------------------------------------------
+- palloc.c was implemented.
+- malloc.c was implemented.
+
+-------------------------------------------------------------------------------------
+Console
+-------------------------------------------------------------------------------------
+- Console - Implement methods to print integers.
+
+
+
+-------------------------------------------------------------------------------------
+Interruptions
+-------------------------------------------------------------------------------------
+- Interruptions - Support for interruptions (IRQ and SWI)
+- Periodic timer configure.
+
+
+-------------------------------------------------------------------------------------
+LIBRARIES
+-------------------------------------------------------------------------------------
+- libgcc.a library was added to the project so Division and module operation can be done.
+- bitmap.c was included.
+

@@ -1,0 +1,131 @@
+osOS features v1.03
+
+
+----------------------------------------------------------------------------------------------------
+GENERAL
+----------------------------------------------------------------------------------------------------
+Move the initialization of the frame buffer to C.
+Create a GPIO library in C.
+Create a memory.h with the layout of the memory (interruptions stack, thread stacks and peripherical
+address).
+The assembly functions used in C files are defined as extern.
+Implement the debug functionality. Include ASSERTION functionality (lib/debug.h and lib/debug.c)
+
+----------------------------------------------------------------------------------------------------
+Threads
+----------------------------------------------------------------------------------------------------
+- Basic Thread support
+- Support the creation of threads (Set the function, nme and thread info)
+- Implementation of the Context Switch.
+- Definition of a static Stack for each thread.
+- Threads run in SYSTEM MODE (SYS_MODE) with the FIQ disable.
+- Basic implementation of a scheduler (Round Robin)
+- Tigh the periodic timer with the Thread tick.
+- Implement the methods:
+	thread_current
+	thread_get_running_thread
+	thread_create
+	thread_block
+	thread_unblock
+	thread_name
+	thread_tid
+	thread_yield
+	schedule
+- Idle thread functionality is supported.
+
+
+-------------------------------------------------------------------------------------
+Memory system
+-------------------------------------------------------------------------------------
+- palloc.c was implemented.
+- malloc.c was implemented.
+
+----------------------------------------------------------------------------------------------------
+Console
+----------------------------------------------------------------------------------------------------
+
+
+----------------------------------------------------------------------------------------------------
+Interruptions
+----------------------------------------------------------------------------------------------------
+Support the detection of the external context.
+Proper support for the yield functionality.
+
+
+----------------------------------------------------------------------------------------------------
+Libraries
+----------------------------------------------------------------------------------------------------
+Move the /Applications/yagarto-4.7.2/lib/gcc/arm-none-eabi/4.7.2/libgcc.a library into the project.
+Added libraries
+	ctype.h
+	debug.c
+	debug.h			(Use the GNU GCC MACROS __FILE__, __LINE__ and __func__)
+	inttypes.h
+	limits.h
+	inttypes.h
+	limits.h
+	packed.h
+	random.c
+	random.h
+	round.h
+	stdarg.h
+	stdbool.h
+	stdio.h
+	stddef.h
+	stdint.h
+	stdlib.c
+	stdlib.h
+	string.c
+	string.h
+	syscall-nr.h
+	lib/kernel/bitmap.h
+	lib/kernel/bitmap.c
+	lib/kernel/list.h
+	lib/kernel/list.c
+
+Used the int constants defined in stdint.h across the project.
+	
+
+----------------------------------------------------------------------------------------------------
+NOTES
+----------------------------------------------------------------------------------------------------
+-------
+Note 1
+-------
+arithmetic.c was not included due is x86 dependant. On x86, division of one 64-bit integer by
+another cannot be done with a single instruction or a short sequence. Thus, GCC implements 64-bit
+division and remainder operations through function calls. These functions are normally obtained
+from libgcc, which is automatically include by GCC in any link that it does.
+
+Some x86-64 machines, however, have a compiler and utilities that can generate 32-bit x86 code
+without having any of the necessary libraries, including libgcc. Thus, we can make Pintos work
+on these machines by simply implementing our own 64-bit division routines, which are the only
+routines from libgcc that Pintos requires.
+
+Completeness is another reason why we should include these routines. If Pintos is completely
+self-contained, then that makes it that much less mysterious.
+
+-------
+Note 2
+-------
+Due we are using libgcc.a to link our project, it is expected that some variables and
+functions are provided due the linker is expecting them. And since we have an extreme bare
+metal system, we need custom memcpy(), abort() etc, the libgcc does not link if we don't provide
+the functions.
+
+The following definitions have been added to kerndl.ld
+
+  	.ARM.extab   : { *(.ARM.extab* .gnu.linkonce.armextab.*) }
+   	__exidx_start = .;
+  	.ARM.exidx   : { *(.ARM.exidx* .gnu.linkonce.armexidx.*) }
+   	__exidx_end = .;
+
+The functions memcpy() and abort() have been provided too.
+
+
+
+
+
+
+
+
