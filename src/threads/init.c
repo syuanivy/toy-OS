@@ -81,19 +81,18 @@ void init() {
 
   printf("\nFinish booting.");
 
-  init_all_threads();
-
-  int i = 0;
-  while(true) {
-      enum interrupts_level old_level = interrupts_disable();
-      unsigned short red = 0xF800;
-      unsigned short green = 0x7E0;
-      SetForeColour(red + green);
-      printf("\nosOs v0.0 Forever: ");
-      printf(" Thread: %s", thread_current()->name);
-      printf(", Priority: %d", thread_current()->priority);
-
-      interrupts_set_level(old_level);
+  /*Start the osOS shell*/
+  printf("\nI'm the osOS shell. What do you want to do?\n");
+  
+  while (true) {
+    
+    char input[100] = {'*','*','*','*','*','*','T','O','D','O','*','*','*','*','*','*','\0'};
+    //TODO - implement scanf and read input
+    //scanf("%s", input);
+    
+    printf("\nEcho: %s\n", input);
+    
+    timer_msleep(2500000);
   }
 
   thread_exit ();
