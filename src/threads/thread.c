@@ -377,13 +377,13 @@ static void schedule() {
   ASSERT (cur->status != THREAD_RUNNING);
   ASSERT (is_thread (next));
 
-  printf("\nKernel Scheduler");
+  //printf("\nKernel Scheduler");
 
   if (interrupts_was_irq_generated()) {
-    printf("\nScheduling a thread in interrupt.");
+    //printf("\nScheduling a thread in interrupt.");
     schedule_in_interrupt(cur, next);
   } else {
-    printf("\nScheduling a thread not in interrupt.");
+    //printf("\nScheduling a thread not in interrupt.");
     schedule_not_in_interrupt(cur, next);
   }
 }
@@ -429,9 +429,9 @@ static void schedule_not_in_interrupt(struct thread *cur, struct thread *next) {
 void thread_schedule_tail(struct thread *prev, struct thread *next) {
   ASSERT (interrupts_get_level () == INTERRUPTS_OFF);
 
-  printf("\nSchedule tail");
-  printf("\nPrev: %s, TID: %d", prev->name, prev->tid);
-  printf("\nNext: %s, TID: %d", next->name, next->tid);
+  //printf("\nSchedule tail");
+  //printf("\nPrev: %s, TID: %d", prev->name, prev->tid);
+  //printf("\nNext: %s, TID: %d", next->name, next->tid);
 
   /* Start new time slice. */
   thread_ticks = 0;
@@ -519,8 +519,8 @@ static void idle (void *idle_started_ UNUSED) {
   unsigned short green = 0x7E0;
 
   for(;;) {
-      SetForeColour(green);
-      printf("\nIdle thread....");
+      //SetForeColour(green);
+      //printf("\nIdle thread....");
       timer_msleep(1000000);
 
       /* Let someone else run. */

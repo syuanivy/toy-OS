@@ -46,6 +46,29 @@ static void test_swi_interrupt() {
   generate_swi_interrupt(); // Function defined in interrupts.s
 }
 
+static void run_shell() {
+  printf("\nStarting the osOS shell...\n");
+  
+  while (true) {
+    
+    char input[100];
+    int index = 0;
+    
+    uart_puts("\nosO$ "); 
+    char inputc = uart_getc();
+    
+    while (inputc != 13)
+    {
+      uart_putc(inputc);
+      input[index++] = inputc;
+      
+      inputc = uart_getc();
+    }
+    
+    input[index] = '\0';
+    printf("\nEcho: %s", input);
+  }
+}
 
 /* Initializes the Operating System. The interruptions have to be disabled at entrance.
 *
@@ -81,19 +104,7 @@ void init() {
 
   printf("\nFinish booting.");
 
-  /*Start the osOS shell*/
-  printf("\nI'm the osOS shell. What do you want to do?\n");
-  
-  while (true) {
-    
-    char input[100] = {'*','*','*','*','*','*','T','O','D','O','*','*','*','*','*','*','\0'};
-    //TODO - implement scanf and read input
-    //scanf("%s", input);
-    
-    printf("\nEcho: %s\n", input);
-    
-    timer_msleep(2500000);
-  }
+  run_shell();
 
   thread_exit ();
 }
