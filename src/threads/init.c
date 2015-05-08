@@ -49,9 +49,10 @@ static void test_swi_interrupt() {
 static void run_shell() {
   printf("\nStarting the osOS shell...\n");
   
-  while (true) {
+  char input[100];
+  while (strcmp(input, "shutdown")) {
     
-    char input[100];
+    memset(input, 0, 100);
     int index = 0;
     
     uart_puts("\nosO$ "); 
@@ -68,6 +69,8 @@ static void run_shell() {
     input[index] = '\0';
     printf("\nEcho: %s", input);
   }
+  
+  printf("\nGoodbye");
 }
 
 /* Initializes the Operating System. The interruptions have to be disabled at entrance.
