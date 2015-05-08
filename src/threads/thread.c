@@ -398,7 +398,7 @@ static void schedule_in_interrupt(struct thread *cur, struct thread *next) {
 
   /* Save the current stack frame of the current thread. */
   thread_save_stack_frame(cur, get_current_interrupts_stack_frame());
-
+  
   if (cur != next) {
       /* Makes a context switch and sets the values for the new stack. */
       context_switch(next, get_current_interrupts_stack_frame());
