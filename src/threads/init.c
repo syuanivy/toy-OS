@@ -42,6 +42,59 @@ static void test_swi_interrupt() {
     generate_swi_interrupt(); // Function defined in interrupts.s
 }
 
+static void run_shell() {
+  printf("\nStarting the osOS shell...\n");
+  
+  char input[100];
+  while (strcmp(input, "shutdown")) {
+    
+    memset(input, 0, 100);
+    int index = 0;
+    
+    uart_puts("\nosO$ "); 
+    char inputc = uart_getc();
+    
+    while (inputc != 13) {
+      uart_putc(inputc);
+      input[index++] = inputc;
+      
+      inputc = uart_getc();
+    }
+    
+    input[index] = '\0';
+    
+    if (!strcmp(input, "help")) {
+      printf("\nts - thread status - show running threads and their run times");
+      printf("\nrun <func> - launch a thread function and wait for its completion");
+      printf("\nbg <func> - launch a command in the background");
+      printf("\nshutdown - shutdown the operating system");
+    }
+    else if (!strcmp(input, "ts")) {
+        printf("\nTODO - ts command");
+    }
+    else if (
+      input[0] == 'r'
+      && input[1] == 'u'
+      && input[2] == 'n'
+      && input[3] == ' '
+    ) {
+      printf("\nTODO - run command");
+    }
+    else if (
+      input[0] == 'b'
+      && input[1] == 'g'
+      && input[2] == ' '
+    ) {
+      printf("\nTODO - bg command");
+    }
+    else {
+      printf("\nUnknown command. Enter 'help' for list of commands.");
+    }
+  }
+  
+  printf("\nGoodbye");
+}
+
 /* Initializes the Operating System. The interruptions have to be disabled at entrance.
  *
  *  - Sets interruptions
@@ -74,22 +127,7 @@ void init() {
     /* Starts preemptive thread scheduling by enabling interrupts. */
     thread_start();
 
-    printf("\nFinish booting.");
-
-    init_all_threads();
-
-    int i = 0;
-    while (true) {
-        enum interrupts_level old_level = interrupts_disable();
-        unsigned short red = 0xF800;
-        unsigned short green = 0x7E0;
-        SetForeColour(red + green);
-        printf("\nosOs v0.0 Forever: ");
-        printf(" Thread: %s", thread_current()->name);
-        printf(", Priority: %d", thread_current()->priority);
-
-        interrupts_set_level(old_level);
-    }
+    run_shell();
 
     thread_exit();
 }

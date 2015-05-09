@@ -83,7 +83,7 @@ static void timer_reset_timer_compare(int timer_compare) {
  * IRQ line using the BCM2835 interrupt controller.
  */
 static void timer_irq_handler(struct interrupts_stack_frame *stack_frame) {
-  printf("\nKernel - Timer Interrupt Handler.");
+  //printf("\nKernel - Timer Interrupt Handler.");
 
   // The System Timer compare has to be reseted after the timer interrupt.
   timer_reset_timer_compare(IRQ_1);

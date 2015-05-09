@@ -205,7 +205,7 @@ void interrupts_dispatch_irq(struct interrupts_stack_frame *stack_frame) {;
   unsigned short blue = 0x1f;
   int32_t foreColour = GetForeColour();
   SetForeColour(blue);
-  printf("\nKERNEL TAKING OVER - Dispatching IRQ");
+  //printf("\nKERNEL TAKING OVER - Dispatching IRQ");
 
   /* External interrupts are special.
      We only handle one at a time (so interrupts must be off).
