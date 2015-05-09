@@ -23,13 +23,9 @@
 static size_t user_page_limit = SIZE_MAX;
 
 /* Tasks for the Threads. */
-static void task_0(void *);
 static void task_1(void *);
 static void task_2(void *);
 static void task_3(void *);
-static void task_4(void *);
-static void task_5(void *);
-static void task_6(void *);
 static void init_all_threads();
 static struct lock lock_task;
 
@@ -98,41 +94,30 @@ void init() {
     thread_exit();
 }
 
+
+tid_t tmp_tid = 0;
 static void init_all_threads() {
     lock_init(&lock_task);
-    tid_t target_tid = thread_create("Thread 1", PRI_MAX, &task_1, NULL);
-    printf("^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ tid: %u\n", target_tid);
-    printf("^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ pointer tid: %u\n", target_tid); 
-    thread_create("Thread 2", PRI_MAX, &task_2, &target_tid);
+    tmp_tid = thread_create("Super Duper", PRI_MAX, &task_1, NULL);
+    thread_create("Burger King", PRI_MAX, &task_2, &tmp_tid);
+    thread_create("In and Out", PRI_MAX, &task_3, &tmp_tid);
 }
 
-static void task_1(void *param) {
-    while (1) {
+static void task_1(void *param UNUSED) {
+    int i = 0;
+    while(i < 100) {
         printf("yeah~I'm the target!\n");
+        ++i;
     }
 }
 
-static void task_2(void *param) {
+static void task_2(void *param UNUSED) {
     tid_t *target_tid = param;
-    printf("......................tid: %u\n", *target_tid);
     thread_wait(*target_tid);
 }
 
-
-/* Task 6 calculates the factorial. */
-static void task_6(void *param) {
-    unsigned short blue = 0x1f;
-    unsigned short green = 0x7E0;
-
-    int i = 1;
-    while (i++ < 250) {
-        int number = i % 25;
-        int fac1 = factorial(number);
-        int fac2 = factorial(number);
-
-        ASSERT(fac1 == fac2);
-        SetForeColour(green + blue);
-        printf("\n%s - Factorial(%d) = %d", thread_current()->name, number, fac1);
-    }
+static void task_3(void *param UNUSED) {
+    tid_t *target_tid = param;
+    thread_wait(*target_tid);
 }
 
