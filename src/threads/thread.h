@@ -103,6 +103,10 @@ struct thread {
   struct list_elem allelem;     /* List element for all threads list. */
   /* Share between thread.c and synch.c. */
   struct list_elem elem;        /* List element. */
+  /* waiting list indicates the threads that are waiting on this thread*/
+  struct list waiting_list;
+  /* wait element */
+  struct list_elem wait_elem;
 
   /* Owned by thread.c. */
   uint32_t magic;               /* Detects stack overflow. */
@@ -123,7 +127,10 @@ const char *thread_name (void);
 void thread_tick (struct interrupts_stack_frame *stack_frame);
 void thread_print_stats (void);
 
+void thread_wait ();
+static struct thread *thread_find(tid_t tid);
 void thread_exit (void);
+static void thread_unblock_waiting_threads(struct thread *t);
 void thread_yield();
 void thread_schedule_tail(struct thread *prev, struct thread *next);
 
