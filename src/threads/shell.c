@@ -10,71 +10,90 @@
  #include "thread.h"
  #include "interrupt.h"
  
+ static char* getThreadStatusText(enum thread_status status) {
+     
+    switch (status) {
+        case THREAD_RUNNING:
+            return "Running";
+        case THREAD_READY:
+            return "Ready";
+        case THREAD_BLOCKED:
+            return "Blocked";
+        case THREAD_DYING:
+            return "Dying";
+    }
+ }
+ 
  static void print_thread_status(struct thread *t, void *param UNUSED) {
-  printf("\n%d, %s", t->tid, strlen(t->name) > 0 ? t->name : "[No Name]");
+   
+    printf("\n%d, %s, %s", 
+        t->tid, 
+        strlen(t->name) > 0 ? t->name : "[No Name]",
+        getThreadStatusText(t->status)
+    );
 }
 
 static void print_threads_status() {
-  interrupts_disable();
-  
-  printf("\nThread ID, Name");
-  thread_foreach(&print_thread_status, NULL);
-  
-  interrupts_enable();
+    interrupts_disable();
+
+    printf("\nThread ID, Name, Status");
+    thread_foreach(&print_thread_status, NULL);
+
+    interrupts_enable();
 }
 
 void run_shell() {
-  printf("\nStarting the osOS shell...\n");
-  
-  char input[100];
-  while (true) {
-    
-    memset(input, 0, 100);
-    int index = 0;
-    
-    uart_puts("\nosO$ "); 
-    char inputc = uart_getc();
-    
-    while (inputc != 13) {
-      uart_putc(inputc);
-      input[index++] = inputc;
-      
-      inputc = uart_getc();
-    }
-    
-    input[index] = '\0';
-    
+    printf("\nStarting the osOS shell...\n");
+
+    char input[100];
+    while (true) {
+
+        memset(input, 0, 100);
+        int index = 0;
+
+        uart_puts("\nosO$ "); 
+        char inputc = uart_getc();
+
+        while (inputc != 13) {
+            uart_putc(inputc);
+            input[index++] = inputc;
+
+            inputc = uart_getc();
+        }
+
+        input[index] = '\0';
+
     if (!strcmp(input, "help")) {
-      printf("\nts - thread status - show running threads and their run times");
-      printf("\nrun <func> - launch a thread function and wait for its completion");
-      printf("\nbg <func> - launch a command in the background");
-      printf("\nshutdown - shutdown the operating system");
+        printf("\nts - thread status - show running threads and their run times");
+        printf("\nrun <func> - launch a thread function and wait for its completion");
+        printf("\nbg <func> - launch a command in the background");
+        printf("\nshutdown - shutdown the operating system");
     }
     else if (!strcmp(input, "ts")) {
         print_threads_status();
     }
     else if (
-      input[0] == 'r'
-      && input[1] == 'u'
-      && input[2] == 'n'
-      && input[3] == ' '
+        input[0] == 'r'
+        && input[1] == 'u'
+        && input[2] == 'n'
+        && input[3] == ' '
     ) {
-      printf("\nTODO - run command");
+        printf("\nTODO - run command");
     }
     else if (
-      input[0] == 'b'
-      && input[1] == 'g'
-      && input[2] == ' '
+        input[0] == 'b'
+        && input[1] == 'g'
+        && input[2] == ' '
     ) {
-      printf("\nTODO - bg command");
+        printf("\nTODO - bg command");
     }
     else if (strcmp(input, "shutdown") == 0) {
-      break;
+        break;
     }
     else {
-      printf("\nUnknown command. Enter 'help' for list of commands.");
+        printf("\nUnknown command. Enter 'help' for list of commands.");
     }
-  }
-  
-  printf("\nGoodbye from the osOS shell");
+}
+
+    printf("\nGoodbye from the osOS shell");
 }
