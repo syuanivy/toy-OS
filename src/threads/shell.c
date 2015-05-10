@@ -7,6 +7,21 @@
  
  #include <stdio.h>
  #include <string.h>
+ #include "thread.h"
+ #include "interrupt.h"
+ 
+ static void print_thread_status(struct thread *t, void *param UNUSED) {
+  printf("\n%d, %s", t->tid, strlen(t->name) > 0 ? t->name : "[No Name]");
+}
+
+static void print_threads_status() {
+  interrupts_disable();
+  
+  printf("\nThread ID, Name");
+  thread_foreach(&print_thread_status, NULL);
+  
+  interrupts_enable();
+}
 
 void run_shell() {
   printf("\nStarting the osOS shell...\n");
@@ -36,7 +51,7 @@ void run_shell() {
       printf("\nshutdown - shutdown the operating system");
     }
     else if (!strcmp(input, "ts")) {
-        printf("\nTODO - ts command");
+        print_threads_status();
     }
     else if (
       input[0] == 'r'
@@ -61,5 +76,5 @@ void run_shell() {
     }
   }
   
-  printf("\nGoodbye");
+  printf("\nGoodbye from the osOS shell");
 }
