@@ -121,7 +121,10 @@ const char* interrupts_get_swi_name() {
 
 /* Returns the interrupt level. */
 enum interrupts_level interrupts_get_level(void) {
+    printf("\n!!!!!!!!!!entering interrupts_get_level");
+
   uint32_t cpsr = get_cpsr_value();  // get_cpsr_value() is defined in interruptsHandlers.s.
+    printf("\nreturning from interrupts_get_level");
 
   // When the IRQ flag is set, it means that IRQ interrupts are disabled, otherwise  are enabled.
   return cpsr & FLAG_IRQ ? INTERRUPTS_OFF : INTERRUPTS_ON;
@@ -134,13 +137,17 @@ enum interrupts_level interrupts_set_level(enum interrupts_level level) {
 
 /* Enables the interrupts and returns the previous one. */
 enum interrupts_level interrupts_enable(void) {
+  printf("\n!!!!!entering interrupts_enable, call interrupts_get_level()");
   enum interrupts_level old_level = interrupts_get_level();
+  printf("\nbefore enable_irq_interruptions");
+
 
   // TODO ADD THE ASSERT (!intr_context ());
 
   /* Enables the IRQ interrupts by setting the IRQ interrupt flag in the
    * CPSR (Current Process Status Register). */
   enable_irq_interruptions();   // enable_irq_interruptions() is defined in interruptsHandler.s.
+  printf("\nreturning from interrupts_enable");
 
   return old_level;
 }

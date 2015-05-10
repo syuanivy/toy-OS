@@ -165,13 +165,25 @@ static struct thread *get_first_thread() {
 
 /* Starts preemptive thread scheduling by enabling interrupts. */
 void thread_start() {
+printf("\nentering thread_start, before declaring idle_started");
+
     /* Creating the idle thread. */
     struct semaphore idle_started;
+printf("\n before sema_init!!!!!!!!!!!!!!!!!");
+
     sema_init(&idle_started, 0);
+
+printf("\nwithin thread_start, before thread_create");
+
     thread_create("Idle Thread", PRI_MAX, &idle, &idle_started);
+
+printf("\nwithin thread_start, before interrupts_enable");
+
 
     // Only Enables the IRQ interruptions, FIQ interruptions remain disable.
     interrupts_enable();
+printf("\nwithin thread_start, before sema_down");
+
 
     /* Wait for the idle thread to initialize idle_thread. */
     sema_down(&idle_started);

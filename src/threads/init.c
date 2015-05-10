@@ -131,13 +131,17 @@ void init() {
     /* Initializes the Interrupt System. */
     interrupts_init();
     timer_init();
+    
+    printf("\nbefore timer_msleep(5000000)");
 
     timer_msleep(5000000);
 
     /* Starts preemptive thread scheduling by enabling interrupts. */
+    printf("\nbefore thread_start()");
+
     thread_start();
 
-   // printf("\nbefore init_busy_test");
+    printf("\nbefore init_busy_test");
 
    // init_busy_test();
 
