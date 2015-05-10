@@ -24,6 +24,9 @@ struct bcm2835_system_timer_registers {
   volatile unsigned int C3;  /** System Timer Compare 3 */
 };
 
+/* List of all sleeping threads, non busy waiting for the */
+static struct list sleep_list;
+
 /* Pointer to the timer registers. */
 static volatile struct bcm2835_system_timer_registers * const timer_registers =
         (volatile struct bcm2835_system_timer_registers*) SYSTEM_TIMER_REGISTERS_BASE;
@@ -63,6 +66,20 @@ void timer_msleep(int milliseconds) {
   }
 }
 
+//Non busy waiting implementation of timer_msleep()
+void timer_msleep_nonbusy(int microseconds){
+
+  //set wakeup_time of the running thread, add to sleep list
+  struct thread *running_thread = thread_current();
+  running_thread->wakeup_time = timer_get_timestamp() + microseconds;
+  list_push_back(&sleep_list, &(running_thread->sleep_elem));
+  
+  // the current thread will be blocked until microseconds later.
+  printf(">>>>>>>>>>>>>>>>>>> yeah! I'm %s and I will sleep for %d microseconds!! <<<<<<<<<<<<<<<<<<<<\n", running_thread->name, microseconds);
+  thread_block();
+
+}
+
 /* Resets the System Timer Compare register (C0-C3) )in the Timer Control/Status register.
  * After a timer interrupt, to clear the interrupt, the software must write 1 to the bit in CS that
  * has the index the same as that of the System Timer Compare register. That is, to clear an
@@ -88,13 +105,32 @@ static void timer_irq_handler(struct interrupts_stack_frame *stack_frame) {
   // The System Timer compare has to be reseted after the timer interrupt.
   timer_reset_timer_compare(IRQ_1);
 
+
+  //wake up sleeping threads if time is up
+  timer_wakeup();
+
   thread_tick(stack_frame);
 
   //timer_msleep(1000000);
-  timer_msleep(300000);
+   timer_msleep(300000);
 
   // The System Timer compare register has to be set up with the new time after the timer interrupt.
   timer_set_interval(IRQ_1, TIMER_PERIODIC_INTERVAL);
+}
+
+/* Called by timer_irq_handler to wake up sleeping threads*/
+void timer_wakeup(){
+
+  struct list_elem *elem = list_begin(&sleep_list);
+    for (; elem != list_end(&sleep_list); elem = list_next(elem)) {
+        struct thread *sleeping_thread = list_entry(elem, struct thread, sleep_elem);
+        if(sleeping_thread->wakeup_time <= timer_get_timestamp()){
+          thread_unblock(sleeping_thread);
+          list_remove(elem);
+          sleeping_thread->wakeup_time = -1;
+          printf(">>>>>>>>>>>>>>>>>>> yeah! I'm %s and I wake up!! <<<<<<<<<<<<<<<<<<<<\n", sleeping_thread->name);
+        }       
+    }  
 }
 
 /* Sets the periodic interval of the timer.

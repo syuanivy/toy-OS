@@ -404,6 +404,7 @@ static void thread_unblock_waiting_threads(struct thread *t) {
     // iterate through all list elements, and unblock threads according
     // to insertion order.
     struct list_elem *elem = list_begin(&(t->waiting_list));
+    if (elem == NULL) return;// we need to return here for empty list...
     for (; elem != list_end(&(t->waiting_list)); elem = list_next(elem)) {
         struct thread *waiting_thread = list_entry(elem, struct thread, wait_elem);
         thread_unblock(waiting_thread);

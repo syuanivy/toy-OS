@@ -108,6 +108,11 @@ struct thread {
   /* wait element */
   struct list_elem wait_elem;
 
+  /* sleep element */
+  struct list_elem sleep_elem;
+  /* wakeup time, only relevent for threads in sleep_list */
+  int wakeup_time;
+
   /* Owned by thread.c. */
   uint32_t magic;               /* Detects stack overflow. */
 };

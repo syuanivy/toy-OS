@@ -29,6 +29,16 @@ static void task_3(void *);
 static void init_all_threads();
 static struct lock lock_task;
 
+/*Tasks for Testing Non-busy Waiting*/
+static void init_busy_test();
+static void init_nonbusy_test();
+static void task_busy_sleeper(void *);
+static void task_nonbusy_sleeper(void *);
+static void task_runner(void *);
+static struct lock lock_task_busy;
+static struct lock lock_task_nonbusy;
+
+
 /*
  * kernel.c
  *
@@ -127,6 +137,15 @@ void init() {
     /* Starts preemptive thread scheduling by enabling interrupts. */
     thread_start();
 
+   // printf("\nbefore init_busy_test");
+
+   // init_busy_test();
+
+   // timer_msleep(5000000);
+
+   // init_nonbusy_test();
+
+
     run_shell();
 
     thread_exit();
@@ -157,5 +176,43 @@ static void task_2(void *param UNUSED) {
 static void task_3(void *param UNUSED) {
     tid_t *target_tid = param;
     thread_wait(*target_tid);
+}
+
+static void init_busy_test() {
+    lock_init(&lock_task_busy);
+printf("\nentering init_busy_test, after lock_init");
+
+    thread_create("busy sleeper", PRI_MAX, &task_busy_sleeper, NULL);
+  //  thread_create("non busy sleeper", PRI_MAX, &task_nonbusy_sleeper, NULL);
+    thread_create("awake runner", PRI_MAX, &task_runner, NULL);
+}
+
+static void init_nonbusy_test() {
+    lock_init(&lock_task_nonbusy);
+  //  thread_create("busy sleeper", PRI_MAX, &task_busy_sleeper, NULL);
+    thread_create("non busy sleeper", PRI_MAX, &task_nonbusy_sleeper, NULL);
+    thread_create("awake runner", PRI_MAX, &task_runner, NULL);
+}
+
+static void task_busy_sleeper(void *param UNUSED) {
+  printf("I'm the busy sleeper and I will fall asleep for 2 seconds\n");
+  timer_msleep(2000000);
+  printf("I'm the busy sleeper and now I wake up\n");
+}
+
+static void task_nonbusy_sleeper(void *param UNUSED) {
+  printf("I'm the non busy sleeper and I will fall asleep for 2 seconds\n");
+  timer_msleep_nonbusy(2000000);
+  printf("I'm the non busy sleeper and now I wake up\n");
+}
+
+static void task_runner(void *param UNUSED) {
+  printf("I'm the awake runner and I start working at %d microseconds!\n", timer_get_timestamp());
+  int i = 0;
+  while(i < 100){
+    i++;
+    printf("awake runner at : %d           ",i);
+  }
+  printf("\nAwake runner has done its job at %d!\n", timer_get_timestamp());
 }
 
