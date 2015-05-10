@@ -49,7 +49,7 @@ LIB_GCC	    = libgcc/libgcc.a
 ASM_SOURCE  = arm_asm/
 
 # SD card
-SD_CARD	    = /Volumes/RECOVERY
+SD_CARD	    = /Volumes/RECOVERY/
 
 # The name of the output file to generate.
 TARGET	    = kernel.img
@@ -87,7 +87,7 @@ rebuild: all
 # Rule to copy the image onto the flash drive.
 install : rebuild
 	cp $(TARGET) $(SD_CARD)
-	#umount $(SD_CARD)
+	diskutil unmount $(SD_CARD)
 
 # Rule to make the listing file.
 $(LIST) : $(BUILD)output.elf
