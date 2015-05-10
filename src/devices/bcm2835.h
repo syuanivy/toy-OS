@@ -71,5 +71,6 @@
 #define IRQ_1 1         // IRQ line for the system timer compare register 1
 #define IRQ_2 2         // IRQ line for the system timer compare register 2 (used by the GPU)
 #define IRQ_3 3         // IRQ line for the system timer compare register 3
-
+/* PL011 UART IRQ line */
+#define IRQ_UART 57
 #endif /* DEVICES_BCM2835_H_ */

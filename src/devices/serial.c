@@ -5,6 +5,7 @@
 #include <string.h>
 
 #include "serial.h"
+#include "bcm2835.h"
 
 void serial_init(void) {
     test_serial();
@@ -78,6 +79,26 @@ enum {
     UART0_TDR = (UART0_BASE + 0x8C),
 };
 
+volatile unsigned int rxhead;
+volatile unsigned int rxtail;
+#define RXBUFMASK 0xFFF// a buffer of 4095 bytes at max
+volatile unsigned char rxbuffer[RXBUFMASK+1];
+
+/* uart interrupt handler */
+static void uart_irq_handler(struct interrupts_stack_frame *stack_frame) {
+    // receive trigger level passed, meaning there are at least
+    // 4 bits waiting in FIFO for default trigger level.
+    while (1) {
+        if ((UART0_RIS & (1 << 4)) == 16) {
+            int c = mmio_read(UART0_DR);
+            rxbuffer[rxhead] = c & 0xFF;// get one byte
+            rxhead = (rxhead + 1) & RXBUFMASK;
+        }
+        else break;
+    }
+    return;
+}
+
 void uart_init() {
     // Disable UART0.
     mmio_write(UART0_CR, 0x00000000);
@@ -110,12 +131,18 @@ void uart_init() {
     // Enable FIFO & 8 bit data transmission (1 stop bit, no parity).
     mmio_write(UART0_LCRH, (1 << 4) | (1 << 5) | (1 << 6));
 
-    // Mask all interrupts.
-    mmio_write(UART0_IMSC, (1 << 1) | (1 << 4) | (1 << 5) | (1 << 6) |
+    // Mask all interrupts. (except for the FIFO receive interrupt)
+    mmio_write(UART0_IMSC, (1 << 1) | (1 << 5) | (1 << 6) |
             (1 << 7) | (1 << 8) | (1 << 9) | (1 << 10));
+    
+    // FIFO receive interrupt trigger level (7/8))
+//    mmio_write(UART0_IFLS, (1 << 5));
 
     // Enable UART0, receive & transfer part of UART.
     mmio_write(UART0_CR, (1 << 0) | (1 << 8) | (1 << 9));
+    
+    // register uart interrupt handler
+    interrupts_register_irq(IRQ_UART, uart_irq_handler, "UART Interrupt");
 }
 
 void uart_putc_helper(unsigned char byte) {
@@ -136,11 +163,14 @@ void uart_putc(unsigned char byte) {
 
 // Test using screen /dev/cu.PL2303-00001004 115200
 
-unsigned char uart_getc() {
-    // Wait for UART to have recieved something.
-    while (mmio_read(UART0_FR) & (1 << 4)) {
-    }
-    return mmio_read(UART0_DR);
+unsigned char uart_getc() {    
+    // if the buffer is not empty, return data,
+    // else block. the current thread will only be woke up
+    // by uart interrupt handler.
+    if (rxtail == rxhead) thread_block();
+    unsigned char c = rxbuffer[rxtail];
+    rxtail = (rxtail + 1) & RXBUFMASK;
+    return c;
 }
 
 void uart_write(const unsigned char* buffer, size_t size) {
