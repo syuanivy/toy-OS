@@ -46,7 +46,7 @@ static void run_shell() {
   printf("\nStarting the osOS shell...\n");
   
   char input[100];
-  while (strcmp(input, "shutdown")) {
+  while (true) {
     
     memset(input, 0, 100);
     int index = 0;
@@ -86,6 +86,9 @@ static void run_shell() {
       && input[2] == ' '
     ) {
       printf("\nTODO - bg command");
+    }
+    else if (strcmp(input, "shutdown") == 0) {
+      break;
     }
     else {
       printf("\nUnknown command. Enter 'help' for list of commands.");
