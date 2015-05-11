@@ -127,6 +127,8 @@ static void init_thread(struct thread *t, const char *name, int priority) {
     ASSERT(name != NULL);
 
     memset(t, 0, sizeof *t);
+    initial_thread->total_runtime = 0;
+    initial_thread->time_at_status = timer_get_timestamp();
     set_status(t, THREAD_BLOCKED);
 
     strlcpy(t->name, name, sizeof t->name);
@@ -285,6 +287,8 @@ tid_t thread_create(const char *name, int32_t priority,
     // Setting the tid number.
     tid = thread->tid = allocate_tid();
 
+    thread->total_runtime = 0;
+    thread->time_at_status = timer_get_timestamp();
     set_status(thread, THREAD_BLOCKED);
     strlcpy(thread->name, name, sizeof thread->name);
     thread->priority = priority;
@@ -696,5 +700,19 @@ static struct interrupts_stack_frame *get_current_interrupts_stack_frame() {
 }
 
 void set_status(struct thread *t, enum thread_status new_status) {
-    t->status = new_status;
+    
+    enum thread_status old_status = t->status;
+    uint32_t time_at_status = t->time_at_status;
+    
+    if (old_status != new_status) {
+    
+        //Set new status
+        t->status = new_status;
+        t->time_at_status = timer_get_timestamp();
+        
+        //Add to the total runtime if the thread is coming out of the running state
+        if (old_status == THREAD_RUNNING) {
+            t->total_runtime += time_at_status;
+        }
+    }
 }

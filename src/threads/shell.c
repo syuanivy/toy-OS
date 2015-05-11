@@ -10,7 +10,7 @@
  #include "thread.h"
  #include "interrupt.h"
  
- static char* getThreadStatusText(enum thread_status status) {
+ static char* get_thread_status(enum thread_status status) {
      
     switch (status) {
         case THREAD_RUNNING:
@@ -24,19 +24,29 @@
     }
  }
  
+ static uint32_t get_total_runtime(struct thread *t) {
+     if (t->status == THREAD_RUNNING) {
+         return t->total_runtime + (timer_get_timestamp() - t->time_at_status);
+     }
+     else {
+         return t->total_runtime;
+     }
+ }
+ 
  static void print_thread_status(struct thread *t, void *param UNUSED) {
    
-    printf("\n%d, %s, %s", 
+    printf("\n%d, %s, %s, %u", 
         t->tid, 
         strlen(t->name) > 0 ? t->name : "[No Name]",
-        getThreadStatusText(t->status)
+        get_thread_status(t->status),
+        get_total_runtime(t)
     );
 }
 
 static void print_threads_status() {
     interrupts_disable();
 
-    printf("\nThread ID, Name, Status");
+    printf("\nThread ID, Name, Status, Total run time");
     thread_foreach(&print_thread_status, NULL);
 
     interrupts_enable();
