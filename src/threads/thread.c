@@ -115,7 +115,7 @@ void thread_init(void) {
     /* Set up a thread structure for the running thread. */
     initial_thread = get_first_thread();
     init_thread(initial_thread, "main", PRI_DEFAULT);
-    initial_thread->status = THREAD_RUNNING;
+    set_status(initial_thread, THREAD_RUNNING);
     initial_thread->tid = allocate_tid();
 }
 
@@ -127,7 +127,7 @@ static void init_thread(struct thread *t, const char *name, int priority) {
     ASSERT(name != NULL);
 
     memset(t, 0, sizeof *t);
-    t->status = THREAD_BLOCKED;
+    set_status(t, THREAD_BLOCKED);
 
     strlcpy(t->name, name, sizeof t->name);
     /* Sets the stack. It's a full descending stack.*/
@@ -285,7 +285,7 @@ tid_t thread_create(const char *name, int32_t priority,
     // Setting the tid number.
     tid = thread->tid = allocate_tid();
 
-    thread->status = THREAD_BLOCKED;
+    set_status(thread, THREAD_BLOCKED);
     strlcpy(thread->name, name, sizeof thread->name);
     thread->priority = priority;
     thread->magic = THREAD_MAGIC;
@@ -329,7 +329,7 @@ void thread_block(void) {
     ASSERT(!interrupts_context());
     ASSERT(interrupts_get_level() == INTERRUPTS_OFF);
 
-    thread_current()->status = THREAD_BLOCKED;
+    set_status(thread_current(), THREAD_BLOCKED);
     schedule();
 }
 
@@ -349,7 +349,7 @@ void thread_unblock(struct thread *t) {
     old_level = interrupts_disable();
     ASSERT(t->status == THREAD_BLOCKED);
     list_push_back(&ready_list, &t->elem);
-    t->status = THREAD_READY;
+    set_status(t, THREAD_READY);
     interrupts_set_level(old_level);
 }
 
@@ -395,7 +395,7 @@ void thread_exit(void) {
      * actually kill the target thread. */
     thread_unblock_waiting_threads(thread_current());
     list_remove(&thread_current()->allelem);
-    thread_current()->status = THREAD_DYING;
+    set_status(thread_current(), THREAD_DYING);
     schedule();
     NOT_REACHED();
 }
@@ -424,7 +424,7 @@ void thread_yield() {
     if (cur != idle_thread) {
         list_push_back(&ready_list, &cur->elem);
     }
-    cur->status = THREAD_READY;
+    set_status(cur, THREAD_READY);
     schedule();
     interrupts_set_level(old_level);
 }
@@ -498,7 +498,7 @@ void thread_schedule_tail(struct thread *prev, struct thread *next) {
   thread_ticks = 0;
 
   /* Mark us as running. */
-  next->status = THREAD_RUNNING;
+  set_status(next, THREAD_RUNNING);
 
   /* If the thread we switched from is dying, destroy its struct
      thread.  This must happen late so that thread_exit() doesn't
@@ -693,4 +693,8 @@ static void set_current_interrupts_stack_frame(struct interrupts_stack_frame *st
 static struct interrupts_stack_frame *get_current_interrupts_stack_frame() {
     ASSERT(current_stack_frame != NULL)
     return current_stack_frame;
+}
+
+void set_status(struct thread *t, enum thread_status new_status) {
+    t->status = new_status;
 }
