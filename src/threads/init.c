@@ -18,6 +18,7 @@
 #include "synch.h"
 #include "thread.h"
 #include "vaddr.h"
+#include "shell.h"
 
 /* -ul: Maximum number of pages to put into palloc's user pool. */
 static size_t user_page_limit = SIZE_MAX;
@@ -38,7 +39,6 @@ static void task_runner(void *);
 static struct lock lock_task_busy;
 static struct lock lock_task_nonbusy;
 
-
 /*
  * kernel.c
  *
@@ -50,59 +50,6 @@ static void test_swi_interrupt() {
     unsigned short green = 0x7E0;
     SetForeColour(green);
     generate_swi_interrupt(); // Function defined in interrupts.s
-}
-
-static void run_shell() {
-  printf("\nStarting the osOS shell...\n");
-  
-  char input[100];
-  while (strcmp(input, "shutdown")) {
-    
-    memset(input, 0, 100);
-    int index = 0;
-    
-    uart_puts("\nosO$ "); 
-    char inputc = uart_getc();
-    
-    while (inputc != 13) {
-      uart_putc(inputc);
-      input[index++] = inputc;
-      
-      inputc = uart_getc();
-    }
-    
-    input[index] = '\0';
-    
-    if (!strcmp(input, "help")) {
-      printf("\nts - thread status - show running threads and their run times");
-      printf("\nrun <func> - launch a thread function and wait for its completion");
-      printf("\nbg <func> - launch a command in the background");
-      printf("\nshutdown - shutdown the operating system");
-    }
-    else if (!strcmp(input, "ts")) {
-        printf("\nTODO - ts command");
-    }
-    else if (
-      input[0] == 'r'
-      && input[1] == 'u'
-      && input[2] == 'n'
-      && input[3] == ' '
-    ) {
-      printf("\nTODO - run command");
-    }
-    else if (
-      input[0] == 'b'
-      && input[1] == 'g'
-      && input[2] == ' '
-    ) {
-      printf("\nTODO - bg command");
-    }
-    else {
-      printf("\nUnknown command. Enter 'help' for list of commands.");
-    }
-  }
-  
-  printf("\nGoodbye");
 }
 
 /* Initializes the Operating System. The interruptions have to be disabled at entrance.
@@ -131,26 +78,15 @@ void init() {
     /* Initializes the Interrupt System. */
     interrupts_init();
     timer_init();
-    
-    printf("\nbefore timer_msleep(5000000)");
 
     timer_msleep(5000000);
 
     /* Starts preemptive thread scheduling by enabling interrupts. */
-    printf("\nbefore thread_start()");
-
     thread_start();
 
-    printf("\nbefore init_busy_test");
+    init_nonbusy_test();
 
-   // init_busy_test();
-
-   // timer_msleep(5000000);
-
-   // init_nonbusy_test();
-
-
-    run_shell();
+  //  run_shell();
 
     thread_exit();
 }
@@ -181,6 +117,7 @@ static void task_3(void *param UNUSED) {
     tid_t *target_tid = param;
     thread_wait(*target_tid);
 }
+
 
 static void init_busy_test() {
     lock_init(&lock_task_busy);
@@ -215,8 +152,10 @@ static void task_runner(void *param UNUSED) {
   int i = 0;
   while(i < 100){
     i++;
-    printf("awake runner at : %d           ",i);
+    printf("%d  ",i);
   }
   printf("\nAwake runner has done its job at %d!\n", timer_get_timestamp());
 }
+
+
 

@@ -165,25 +165,13 @@ static struct thread *get_first_thread() {
 
 /* Starts preemptive thread scheduling by enabling interrupts. */
 void thread_start() {
-printf("\nentering thread_start, before declaring idle_started");
-
     /* Creating the idle thread. */
     struct semaphore idle_started;
-printf("\n before sema_init!!!!!!!!!!!!!!!!!");
-
     sema_init(&idle_started, 0);
-
-printf("\nwithin thread_start, before thread_create");
-
     thread_create("Idle Thread", PRI_MAX, &idle, &idle_started);
-
-printf("\nwithin thread_start, before interrupts_enable");
-
 
     // Only Enables the IRQ interruptions, FIQ interruptions remain disable.
     interrupts_enable();
-printf("\nwithin thread_start, before sema_down");
-
 
     /* Wait for the idle thread to initialize idle_thread. */
     sema_down(&idle_started);
@@ -338,10 +326,13 @@ tid_t thread_create(const char *name, int32_t priority,
    is usually a better idea to use one of the synchronization
    primitives in synch.h. */
 void thread_block(void) {
+    printf("\n entering thread_block\n");
     ASSERT(!interrupts_context());
     ASSERT(interrupts_get_level() == INTERRUPTS_OFF);
-
+    printf("\nwithin thread_block before calling thread_current");
     thread_current()->status = THREAD_BLOCKED;
+    printf("\nwithin thread_block after calling thread_current");
+
     schedule();
 }
 
@@ -375,6 +366,7 @@ const char * thread_name(void) {
    See the big comment at the top of thread.h for details. */
 struct thread * thread_current(void) {
     struct thread *t = thread_get_running_thread();
+    printf("\n within current, the thread found is %s\n", t->name );
 
     /* Make sure T is really a thread.
        If either of these assertions fire, then your thread may
