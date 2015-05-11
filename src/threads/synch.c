@@ -44,17 +44,10 @@
 void
 sema_init (struct semaphore *sema, unsigned value) 
 {
-  printf("\n entering sema_init,before assert(sema != bull)");
-
   ASSERT (sema != NULL);
 
   sema->value = value;
-  printf("\n after initialize sema->value, before list_init");
-
   list_init (&sema->waiters);
-
-  printf("\n after list_init");
-
 }
 
 /* Down or "P" operation on a semaphore.  Waits for SEMA's value

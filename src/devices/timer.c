@@ -113,6 +113,7 @@ static void timer_irq_handler(struct interrupts_stack_frame *stack_frame) {
 
   thread_tick(stack_frame);
 
+  printf("\nWithin timer_irq_handler: before timer_wakeup()\n");
 
   //wake up sleeping threads if time is up
   timer_wakeup();
@@ -130,14 +131,21 @@ static void timer_irq_handler(struct interrupts_stack_frame *stack_frame) {
 void timer_wakeup(){
 
   struct list_elem *elem = list_begin(&sleep_list);
+    printf("\nentering timer_wakeup()\n");
+
   if (elem == NULL) return;// we need to return here for empty list...
   for (; elem != list_end(&sleep_list); elem = list_next(elem)) {
       struct thread *sleeping_thread = list_entry(elem, struct thread, sleep_elem);
+      printf("\nthread entry in sleep_list: %s\n", sleeping_thread->name);
+      printf("\n wakeup_time: %d; timer_get_timestamp: %d\n", sleeping_thread->wakeup_time, timer_get_timestamp());
+      printf("\ncurrent status: %s\n", sleeping_thread->status);
+
       if(sleeping_thread->wakeup_time <= timer_get_timestamp()){
+        printf("\n !!!!!!!!!!!!!! wake up %s at %d\n", sleeping_thread->name, sleeping_thread->wakeup_time );
         thread_unblock(sleeping_thread);
         list_remove(elem);
         sleeping_thread->wakeup_time = -1;
-        printf(">>>>>>>>>>>>>>>>>>> yeah! I'm %s and I wake up!! <<<<<<<<<<<<<<<<<<<<\n", sleeping_thread->name);
+        printf("\n>>>>>>>>>>>>>>>>>>> yeah! I'm %s and I wake up!! <<<<<<<<<<<<<<<<<<<<\n", sleeping_thread->name);
       }       
   }  
 }

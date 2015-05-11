@@ -136,19 +136,19 @@ static void init_nonbusy_test() {
 }
 
 static void task_busy_sleeper(void *param UNUSED) {
-  printf("I'm the busy sleeper and I will fall asleep for 2 seconds\n");
+  printf("\nI'm the busy sleeper and I will fall asleep for 2 seconds\n");
   timer_msleep(2000000);
-  printf("I'm the busy sleeper and now I wake up\n");
+  printf("\nI'm the busy sleeper and now I wake up\n");
 }
 
 static void task_nonbusy_sleeper(void *param UNUSED) {
-  printf("I'm the non busy sleeper and I will fall asleep for 2 seconds\n");
-  timer_msleep_nonbusy(2000000);
-  printf("I'm the non busy sleeper and now I wake up\n");
+  printf("\nI'm the non busy sleeper and I will fall asleep for 2 seconds\n");
+  timer_msleep_nonbusy(200000);
+  printf("\nI'm the non busy sleeper and now I wake up\n");
 }
 
 static void task_runner(void *param UNUSED) {
-  printf("I'm the awake runner and I start working at %d microseconds!\n", timer_get_timestamp());
+  printf("\nI'm the awake runner and I start working at %d microseconds!\n", timer_get_timestamp());
   int i = 0;
   while(i < 100){
     i++;
