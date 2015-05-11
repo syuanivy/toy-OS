@@ -128,7 +128,8 @@ static void init_thread(struct thread *t, const char *name, int priority) {
 
     memset(t, 0, sizeof *t);
     initial_thread->total_runtime = 0;
-    initial_thread->time_at_status = timer_get_timestamp();
+    initial_thread->start_time = timer_get_timestamp();
+    initial_thread->time_at_status = initial_thread->start_time;
     set_status(t, THREAD_BLOCKED);
 
     strlcpy(t->name, name, sizeof t->name);
@@ -288,7 +289,8 @@ tid_t thread_create(const char *name, int32_t priority,
     tid = thread->tid = allocate_tid();
 
     thread->total_runtime = 0;
-    thread->time_at_status = timer_get_timestamp();
+    thread->start_time = timer_get_timestamp();
+    thread->time_at_status = thread->start_time;
     set_status(thread, THREAD_BLOCKED);
     strlcpy(thread->name, name, sizeof thread->name);
     thread->priority = priority;

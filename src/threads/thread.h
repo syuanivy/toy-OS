@@ -101,6 +101,7 @@ struct thread {
   struct interrupts_stack_frame stack_frame; /* Stack frame of the thread */
   uint32_t time_at_status;
   uint32_t total_runtime;
+  uint32_t start_time;
 
   struct list_elem allelem;     /* List element for all threads list. */
   /* Share between thread.c and synch.c. */

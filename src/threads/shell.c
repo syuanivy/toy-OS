@@ -33,20 +33,27 @@
      }
  }
  
+ static uint32_t get_percent_runtime(struct thread *t) {
+     //return t->start_time;
+//     return get_total_runtime(t) / (timer_get_timestamp() - t->start_time) * 100;
+        return 0;
+ }
+ 
  static void print_thread_status(struct thread *t, void *param UNUSED) {
    
-    printf("\n%d, %s, %s, %u", 
+    printf("\n%d, %s, %s, %u, %u", 
         t->tid, 
         strlen(t->name) > 0 ? t->name : "[No Name]",
         get_thread_status(t->status),
-        get_total_runtime(t)
+        get_total_runtime(t),
+        get_percent_runtime(t)
     );
 }
 
 static void print_threads_status() {
     interrupts_disable();
 
-    printf("\nThread ID, Name, Status, Total run time");
+    printf("\nThread ID, Name, Status, Total run time, % total run time since thread start");
     thread_foreach(&print_thread_status, NULL);
 
     interrupts_enable();
