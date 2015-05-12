@@ -66,134 +66,134 @@ static void dummy_handler(struct interrupts_stack_frame *stack_frame);
  * Note: By the default the FIQ interruptions will remain disabled.
  */
 void interrupts_init(void) {
-  printf("\nInitializing interrupts.....");
-  int32_t i;
+    int32_t i;
 
-  was_irq_generated = false;
-  in_external_interrupt = false;
-  yield_on_return = false;
+    was_irq_generated = false;
+    in_external_interrupt = false;
+    yield_on_return = false;
 
-  /* Initialize irq_names and irq_handlers. */
-  for (i = 0; i < IRQ_COUNT; i++) {
-      irq_names[i] = "Unknown";
-      irq_handlers[i] = dummy_handler;
-  }
+    /* Initialize irq_names and irq_handlers. */
+    for (i = 0; i < IRQ_COUNT; i++) {
+        irq_names[i] = "Unknown";
+        irq_handlers[i] = dummy_handler;
+    }
 
-  // FIQ interrupts remain disabled.
-    disable_fiq_interruptions();  // disable_fiq_interruptions() is defined in interruptsHander.s
+    // FIQ interrupts remain disabled.
+    disable_fiq_interruptions(); // disable_fiq_interruptions() is defined in interruptsHander.s
 }
 
 /* Register the IRQ handler for the given interrupt number. The BCM2835 has 64 IRQ interruptions
  * that are enumerated from 0 to 63.
  */
 void interrupts_register_irq(unsigned char irq_number, interrupts_handler_function *handler,
-    const char *name) {
-  if (!interrupts_is_valid_irq_number(irq_number)) {
-      return;
-  }
+        const char *name) {
+    
+    if (!interrupts_is_valid_irq_number(irq_number)) {
+        return;
+    }
+    irq_handlers[irq_number] = handler;
+    irq_names[irq_number] = name;
 
-  irq_handlers[irq_number] = handler;
-  irq_names[irq_number] = name;
-
-  // Enables the IRQ in the Interrupt Controller.
-  interrupts_enable_irq(irq_number);
+    // Enables the IRQ in the Interrupt Controller.
+    interrupts_enable_irq(irq_number);
 }
 
 /* Register the SWI hander for the Software interrupts. */
 void interrupts_register_swi(interrupts_handler_function *handler, const char *name) {
-  swi_handler = handler;
-  swi_name = name;
+    swi_handler = handler;
+    swi_name = name;
 }
 
 /* Return the IRQ name that correspond to the interrupt number. */
 const char* interrupts_get_irq_name(unsigned char irq_number) {
-  if (!interrupts_is_valid_irq_number(irq_number)) {
-      return '\0';
-  }
+    if (!interrupts_is_valid_irq_number(irq_number)) {
+        return '\0';
+    }
 
-  return irq_names[irq_number];
+    return irq_names[irq_number];
 }
 
 /* Return the SWI name. */
 const char* interrupts_get_swi_name() {
-  return swi_name;
+    return swi_name;
 }
 
 /* Returns the interrupt level. */
 enum interrupts_level interrupts_get_level(void) {
-  uint32_t cpsr = get_cpsr_value();  // get_cpsr_value() is defined in interruptsHandlers.s.
+    uint32_t cpsr = get_cpsr_value(); // get_cpsr_value() is defined in interruptsHandlers.s.
 
-  // When the IRQ flag is set, it means that IRQ interrupts are disabled, otherwise  are enabled.
-  return cpsr & FLAG_IRQ ? INTERRUPTS_OFF : INTERRUPTS_ON;
+    // When the IRQ flag is set, it means that IRQ interrupts are disabled, otherwise  are enabled.
+    return cpsr & FLAG_IRQ ? INTERRUPTS_OFF : INTERRUPTS_ON;
 }
 
 /* Sets the interrupts level and returns the previous one. */
 enum interrupts_level interrupts_set_level(enum interrupts_level level) {
-  return level == INTERRUPTS_ON ? interrupts_enable() : interrupts_disable();
+    return level == INTERRUPTS_ON ? interrupts_enable() : interrupts_disable();
 }
 
 /* Enables the interrupts and returns the previous one. */
 enum interrupts_level interrupts_enable(void) {
-  enum interrupts_level old_level = interrupts_get_level();
+    enum interrupts_level old_level = interrupts_get_level();
 
-  // TODO ADD THE ASSERT (!intr_context ());
+    // TODO ADD THE ASSERT (!intr_context ());
 
-  /* Enables the IRQ interrupts by setting the IRQ interrupt flag in the
-   * CPSR (Current Process Status Register). */
-  enable_irq_interruptions();   // enable_irq_interruptions() is defined in interruptsHandler.s.
+    /* Enables the IRQ interrupts by setting the IRQ interrupt flag in the
+     * CPSR (Current Process Status Register). */
+    enable_irq_interruptions(); // enable_irq_interruptions() is defined in interruptsHandler.s.
 
-  return old_level;
+    return old_level;
 }
 
 /* Disables the interrupts and returns the previous one. */
 enum interrupts_level interrupts_disable(void) {
-  enum interrupts_level old_level = interrupts_get_level();
+    enum interrupts_level old_level = interrupts_get_level();
 
-  /* Disables the IRQ interrupts by clearing the IRQ interrupt flag in the
-     CPSR (Current Process Status Register). */
-  disable_irq_interruptions();   // disable_irq_interruptions() is defined in interruptsHandler.s.
+    /* Disables the IRQ interrupts by clearing the IRQ interrupt flag in the
+       CPSR (Current Process Status Register). */
+    disable_irq_interruptions(); // disable_irq_interruptions() is defined in interruptsHandler.s.
 
-  return old_level;
+    return old_level;
 }
 
 /* Prints status of the interrupts. */
 void interrupts_print_status(void) {
-  uint32_t cpsr = get_cpsr_value();  // get_cpsr_value() is defined in interruptsHandlers.s.
+    uint32_t cpsr = get_cpsr_value(); // get_cpsr_value() is defined in interruptsHandlers.s.
 
-  bool enable_irq_status = !(cpsr & FLAG_IRQ);
-  bool enable_fiq_status = !(cpsr & FLAG_FIQ);
+    bool enable_irq_status = !(cpsr & FLAG_IRQ);
+    bool enable_fiq_status = !(cpsr & FLAG_FIQ);
 
-  if (enable_irq_status) {
-    printf("\nIRQ ON");
-  } else {
-    printf("\nIRQ OFF");
-  }
+    if (enable_irq_status) {
+        printf("\nIRQ ON");
+    } else {
+        printf("\nIRQ OFF");
+    }
 
-  if (enable_fiq_status) {
-    printf("\nFIQ ON");
-  } else {
-    printf("\nFIQ OFF");
-  }
+    if (enable_fiq_status) {
+        printf("\nFIQ ON");
+    } else {
+        printf("\nFIQ OFF");
+    }
 }
 
 /* Returns true during processing of an external interrupt and false at all other times. */
 bool interrupts_context(void) {
-  return in_external_interrupt;
+    return in_external_interrupt;
 }
 
 /* Returns true if an IRQ was generated. It is similar to interrupts_context, the difference is that
    this flag is active till the end of the processing of the IRQ. */
 bool interrupts_was_irq_generated(void) {
-  return was_irq_generated;
+    return was_irq_generated;
 }
 
 /* During processing of an external interrupt, directs the
    interrupt handler to yield to a new process just before
    returning from the interrupt.  May not be called at any other
    time. */
-void interrupts_yield_on_return (void) {
-  yield_on_return = true;
+void interrupts_yield_on_return(void) {
+    yield_on_return = true;
 }
+
 
 /* IRQ Dispatcher
  *
@@ -201,53 +201,56 @@ void interrupts_yield_on_return (void) {
  * to the specify interrupt number is marked in the interrupts register indicating that that
  * interrupt was triggered.
  * */
-void interrupts_dispatch_irq(struct interrupts_stack_frame *stack_frame) {;
-  unsigned short blue = 0x1f;
-  int32_t foreColour = GetForeColour();
-  SetForeColour(blue);
-  //printf("\nKERNEL TAKING OVER - Dispatching IRQ");
+void interrupts_dispatch_irq(struct interrupts_stack_frame *stack_frame) {
+    unsigned short blue = 0x1f;
+    int32_t foreColour = GetForeColour();
+    SetForeColour(blue);
+    //printf("\nKERNEL TAKING OVER - Dispatching IRQ");
 
-  /* External interrupts are special.
-     We only handle one at a time (so interrupts must be off).
-     An external interrupt handler cannot sleep.
-   */
-  ASSERT(interrupts_get_level() == INTERRUPTS_OFF);
-  ASSERT(!interrupts_context());
-  ASSERT(!interrupts_was_irq_generated());
+    /* External interrupts are special.
+       We only handle one at a time (so interrupts must be off).
+       An external interrupt handler cannot sleep.
+     */
+    ASSERT(interrupts_get_level() == INTERRUPTS_OFF);
+    ASSERT(!interrupts_context());
+    ASSERT(!interrupts_was_irq_generated());
 
-  was_irq_generated = true;
-  in_external_interrupt = true; /* In external interrupt context. */
-  yield_on_return = false;
+    was_irq_generated = true;
+    in_external_interrupt = true; /* In external interrupt context. */
+    yield_on_return = false;
 
-  int32_t i;
-  // First half of the pending interrupts (0-31)
-  int32_t *interrupt_ptr = (int32_t *) INTERRUPT_REGISTER_PENDING_IRQ_0_31;
-  for (i = 0; i < IRQ_COUNT / 2; i++) {
-      bool enable = *interrupt_ptr & (1 << i);
-      if (enable) {
-          interrupts_dispatch_pending_irq(stack_frame, i);
-      }
-  }
+    int32_t i;
+    int count = 0;
+    // First half of the pending interrupts (0-31)
+    int32_t *interrupt_ptr = (int32_t *) INTERRUPT_REGISTER_PENDING_IRQ_0_31;
+    for (i = 0; i < IRQ_COUNT / 2; i++) {
+        bool enable = *interrupt_ptr & (1 << i);
+        if (enable) {
+            interrupts_dispatch_pending_irq(stack_frame, count);
+        }
+        ++count;
+    }
 
-  // Second half of the pending interrupts (32-63)
-  interrupt_ptr = (int32_t *) INTERRUPT_REGISTER_PENDING_IRQ_32_63;
-  for (i = 0; i < IRQ_COUNT / 2; i++) {
-      bool enable = *interrupt_ptr & (1 << i);
-      if (enable) {
-          interrupts_dispatch_pending_irq(stack_frame, i);
-      }
-  }
+    // Second half of the pending interrupts (32-63)
+    interrupt_ptr = (int32_t *) INTERRUPT_REGISTER_PENDING_IRQ_32_63;
+    for (i = 0; i < IRQ_COUNT / 2; i++) {
+        bool enable = *interrupt_ptr & (1 << i);
+        if (enable) {
+            interrupts_dispatch_pending_irq(stack_frame, count);
+        }
+        ++count;
+    }
 
-  SetForeColour(foreColour);
+    SetForeColour(foreColour);
 
-  ASSERT(interrupts_get_level() == INTERRUPTS_OFF);
-  ASSERT(interrupts_context());
+    ASSERT(interrupts_get_level() == INTERRUPTS_OFF);
+    ASSERT(interrupts_context());
 
-  in_external_interrupt = false; /* End of the interrupt context. */
-  if (yield_on_return)
-    thread_yield();
+    in_external_interrupt = false; /* End of the interrupt context. */
+    if (yield_on_return)
+        thread_yield();
 
-  was_irq_generated = false;
+    was_irq_generated = false;
 }
 
 /* SWI Dispatcher
@@ -255,71 +258,70 @@ void interrupts_dispatch_irq(struct interrupts_stack_frame *stack_frame) {;
  * Dispatches the SWI interrupt requests.
  */
 void interrupts_dispatch_swi(struct interrupts_stack_frame *stack_frame, int32_t swi_number) {
-  ASSERT(interrupts_get_level() == INTERRUPTS_OFF);
-  ASSERT(!interrupts_context());
+    ASSERT(interrupts_get_level() == INTERRUPTS_OFF);
+    ASSERT(!interrupts_context());
 
-  unsigned short green = 0x7E0;
-  int32_t foreColour = GetForeColour();
-  SetForeColour(green);
-  printf("\nInterrupt SWI handler: #%d", swi_number);
-  SetForeColour(foreColour);
+    unsigned short green = 0x7E0;
+    int32_t foreColour = GetForeColour();
+    SetForeColour(green);
+    printf("\nInterrupt SWI handler: #%d", swi_number);
+    SetForeColour(foreColour);
 }
 
 void interrupts_debug(struct interrupts_stack_frame *stack_frame) {
-  printf("\nCPSR: ");
-  debug_print_bits_int(stack_frame->cpsr);
-  printf("\nr13_sp: %d", (int32_t) stack_frame->r13_sp);
-  printf("\nr14_lr: %d", (int32_t) stack_frame->r14_lr);
-  printf("\nr15_pc: %d", (int32_t) stack_frame->r15_pc);
-  printf("\nr0: %d", stack_frame->r0);
-  printf("\nr1: %d", stack_frame->r1);
-  printf("\nr2: %d", stack_frame->r2);
-  printf("\nr3: %d", stack_frame->r3);
-  printf("\nr4: %d", stack_frame->r4);
-  printf("\nr5: %d", stack_frame->r5);
-  printf("\nr6: %d", stack_frame->r6);
-  printf("\nr7: %d", stack_frame->r7);
-  printf("\nr8: %d", stack_frame->r8);
-  printf("\nr9: %d", stack_frame->r9);
-  printf("\nr10: %d", stack_frame->r10);
-  printf("\nr11: %d", stack_frame->r11);
-  printf("\nr12: %d", stack_frame->r12);
+    printf("\nCPSR: ");
+    debug_print_bits_int(stack_frame->cpsr);
+    printf("\nr13_sp: %d", (int32_t) stack_frame->r13_sp);
+    printf("\nr14_lr: %d", (int32_t) stack_frame->r14_lr);
+    printf("\nr15_pc: %d", (int32_t) stack_frame->r15_pc);
+    printf("\nr0: %d", stack_frame->r0);
+    printf("\nr1: %d", stack_frame->r1);
+    printf("\nr2: %d", stack_frame->r2);
+    printf("\nr3: %d", stack_frame->r3);
+    printf("\nr4: %d", stack_frame->r4);
+    printf("\nr5: %d", stack_frame->r5);
+    printf("\nr6: %d", stack_frame->r6);
+    printf("\nr7: %d", stack_frame->r7);
+    printf("\nr8: %d", stack_frame->r8);
+    printf("\nr9: %d", stack_frame->r9);
+    printf("\nr10: %d", stack_frame->r10);
+    printf("\nr11: %d", stack_frame->r11);
+    printf("\nr12: %d", stack_frame->r12);
 }
 
 /* Dispatches the pending IRQ. */
 static void interrupts_dispatch_pending_irq(struct interrupts_stack_frame *stack_frame, int32_t irq_number) {
-  irq_handlers[irq_number](stack_frame);
+    irq_handlers[irq_number](stack_frame);
 }
 
 /* Dummy interrupt handler. */
 static void dummy_handler(struct interrupts_stack_frame *stack_frame) {
-  printf("\nDummy Interrupt handler......");
+    printf("Dummy Interrupt handler......\n");
 }
 
 /* Returns true if the IRQ number is valid, otherwise false. */
 static bool interrupts_is_valid_irq_number(unsigned char irq_number) {
-  if (irq_number >= IRQ_COUNT) {
+    if (irq_number >= IRQ_COUNT) {
         return false;
     }
 
-  return true;
+    return true;
 }
 
 /* Enables the given IRQ in the interrupt controller (BCM2835 SoC - System on Chip). */
 static void interrupts_enable_irq(unsigned char irq_number) {
-  if (!interrupts_is_valid_irq_number(irq_number)) {
+    if (!interrupts_is_valid_irq_number(irq_number)) {
         return;
-  }
-
-  int32_t half_interrupts = IRQ_COUNT / 2;
-  int32_t *interrupt_ptr;
-  if (irq_number < half_interrupts) {
-      interrupt_ptr = (int32_t *) (INTERRUPT_REGISTER_ENABLE_IRQ_0_31);
-      *interrupt_ptr = *interrupt_ptr | (1 << irq_number);
-  } else {
-      irq_number = irq_number - half_interrupts;
-      interrupt_ptr = (int32_t *) (INTERRUPT_REGISTER_ENABLE_IRQ_32_63);
-      *interrupt_ptr = *interrupt_ptr | (1 << irq_number);
-  }
+    }
+    int32_t half_interrupts = IRQ_COUNT / 2;
+    int32_t *interrupt_ptr;
+    if (irq_number < half_interrupts) {
+        interrupt_ptr = (int32_t *) (INTERRUPT_REGISTER_ENABLE_IRQ_0_31);
+        *interrupt_ptr = *interrupt_ptr | (1 << irq_number);
+    } else {
+        irq_number = irq_number - half_interrupts;
+        interrupt_ptr = (int32_t *) (INTERRUPT_REGISTER_ENABLE_IRQ_32_63);
+        *interrupt_ptr = *interrupt_ptr | (1 << irq_number);
+    }
 }
 

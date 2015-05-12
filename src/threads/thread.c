@@ -328,7 +328,6 @@ tid_t thread_create(const char *name, int32_t priority,
 void thread_block(void) {
     ASSERT(!interrupts_context());
     ASSERT(interrupts_get_level() == INTERRUPTS_OFF);
-
     thread_current()->status = THREAD_BLOCKED;
     schedule();
 }
@@ -404,7 +403,7 @@ static void thread_unblock_waiting_threads(struct thread *t) {
     // iterate through all list elements, and unblock threads according
     // to insertion order.
     struct list_elem *elem = list_begin(&(t->waiting_list));
-    if (elem == NULL) return;// we need to return here for empty list...
+    if (elem == NULL) return; // we need to return here for empty list...
     for (; elem != list_end(&(t->waiting_list)); elem = list_next(elem)) {
         struct thread *waiting_thread = list_entry(elem, struct thread, wait_elem);
         thread_unblock(waiting_thread);
@@ -430,23 +429,19 @@ void thread_yield() {
 }
 
 static void schedule() {
-  /* Scheduling the next thread to run. */
-  struct thread *cur = thread_get_running_thread();
-  struct thread *next = thread_get_next_thread_to_run();
+    /* Scheduling the next thread to run. */
+    struct thread *cur = thread_get_running_thread();
+    struct thread *next = thread_get_next_thread_to_run();
 
-  ASSERT (interrupts_get_level () == INTERRUPTS_OFF);
-  ASSERT (cur->status != THREAD_RUNNING);
-  ASSERT (is_thread (next));
+    ASSERT(interrupts_get_level() == INTERRUPTS_OFF);
+    ASSERT(cur->status != THREAD_RUNNING);
+    ASSERT(is_thread(next));
 
-  //printf("\nKernel Scheduler");
-
-  if (interrupts_was_irq_generated()) {
-    //printf("\nScheduling a thread in interrupt.");
-    schedule_in_interrupt(cur, next);
-  } else {
-    //printf("\nScheduling a thread not in interrupt.");
-    schedule_not_in_interrupt(cur, next);
-  }
+    if (interrupts_was_irq_generated()) {
+        schedule_in_interrupt(cur, next);
+    } else {
+        schedule_not_in_interrupt(cur, next);
+    }
 }
 
 /* When an IRQ interrupts is generated, the interrupt_stack_frame is saved and by the interrupts
@@ -456,7 +451,6 @@ static void schedule_in_interrupt(struct thread *cur, struct thread *next) {
     ASSERT(is_thread(cur));
     ASSERT(is_thread(next));
     ASSERT(interrupts_was_irq_generated());
-
     /* Save the current stack frame of the current thread. */
     thread_save_stack_frame(cur, get_current_interrupts_stack_frame());
 
@@ -488,31 +482,27 @@ static void schedule_not_in_interrupt(struct thread *cur, struct thread *next) {
    After this function and its caller returns, the thread switch is complete.
  */
 void thread_schedule_tail(struct thread *prev, struct thread *next) {
-  ASSERT (interrupts_get_level () == INTERRUPTS_OFF);
+    ASSERT(interrupts_get_level() == INTERRUPTS_OFF);
 
-  //printf("\nSchedule tail");
-  //printf("\nPrev: %s, TID: %d", prev->name, prev->tid);
-  //printf("\nNext: %s, TID: %d", next->name, next->tid);
+    /* Start new time slice. */
+    thread_ticks = 0;
 
-  /* Start new time slice. */
-  thread_ticks = 0;
+    /* Mark us as running. */
+    next->status = THREAD_RUNNING;
 
-  /* Mark us as running. */
-  next->status = THREAD_RUNNING;
+    /* If the thread we switched from is dying, destroy its struct
+       thread.  This must happen late so that thread_exit() doesn't
+       pull out the rug under itself.  (We don't free
+       initial_thread because its memory was not obtained via
+       palloc().) */
+    if (prev->status == THREAD_DYING && prev != initial_thread) {
+        ASSERT(prev != next)
+        printf("\nReleasing resources of : %s, TID: %d", prev->name, prev->tid);
 
-  /* If the thread we switched from is dying, destroy its struct
-     thread.  This must happen late so that thread_exit() doesn't
-     pull out the rug under itself.  (We don't free
-     initial_thread because its memory was not obtained via
-     palloc().) */
-  if (prev->status == THREAD_DYING && prev != initial_thread) {
-       ASSERT (prev != next)
-       printf("\nReleasing resources of : %s, TID: %d", prev->name, prev->tid);
-
-       /* Releasing the memory that was assigned to this thread. */
-       palloc_free_page(prev);
-       timer_msleep(1000000);
-   }
+        /* Releasing the memory that was assigned to this thread. */
+        palloc_free_page(prev);
+        timer_msleep(1000000);
+    }
 }
 
 /* Invoke function 'func' on all threads, passing along 'aux'.
@@ -578,10 +568,10 @@ static void idle(void *idle_started_ UNUSED) {
 
     unsigned short green = 0x7E0;
 
-  for(;;) {
-      //SetForeColour(green);
-      //printf("\nIdle thread....");
-      timer_msleep(1000000);
+    for (;;) {
+        //SetForeColour(green);
+        //printf("\nIdle thread....");
+        timer_msleep(1000000);
 
         /* Let someone else run. */
         interrupts_disable();

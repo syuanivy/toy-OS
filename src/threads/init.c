@@ -11,6 +11,7 @@
 #include "../devices/serial.h"
 #include "../devices/timer.h"
 #include "../devices/video.h"
+#include "../devices/bcm2835.h"
 #include "interrupt.h"
 #include "init.h"
 #include "palloc.h"
@@ -27,6 +28,7 @@ static size_t user_page_limit = SIZE_MAX;
 static void task_1(void *);
 static void task_2(void *);
 static void task_3(void *);
+static void task_shell(void *);
 static void init_all_threads();
 static struct lock lock_task;
 
@@ -55,43 +57,50 @@ void init() {
       then enable console locking. */
     thread_init();
 
+    /* Initializes the Interrupt System, we do that before initializing
+     * serial port */
+    interrupts_init();
+
     /* Initializes the frame buffer and console. */
     framebuffer_init();
     serial_init();
     video_init();
 
-    printf("\nosOs Kernel Initializing");
-
     /* Initialize memory system. */
     palloc_init(user_page_limit);
     malloc_init();
 
-    /* Initializes the Interrupt System. */
-    interrupts_init();
-    timer_init();
 
-    timer_msleep(5000000);
+    timer_init();
+    printf("\n[Kernel Initialization Finished]\n");
+
+    timer_msleep(3000000);
 
     /* Starts preemptive thread scheduling by enabling interrupts. */
     thread_start();
 
-    run_shell();
+    init_all_threads();
+
+    while (true) {
+    }
 
     thread_exit();
 }
 
 
 tid_t tmp_tid = 0;
+
 static void init_all_threads() {
     lock_init(&lock_task);
-    tmp_tid = thread_create("Super Duper", PRI_MAX, &task_1, NULL);
-    thread_create("Burger King", PRI_MAX, &task_2, &tmp_tid);
-    thread_create("In and Out", PRI_MAX, &task_3, &tmp_tid);
+    //    tmp_tid = thread_create("Super Duper", PRI_MAX, &task_1, NULL);
+    //    thread_create("Burger King", PRI_MAX, &task_2, &tmp_tid);
+    //    thread_create("In and Out", PRI_MAX, &task_3, &tmp_tid);
+    thread_create("Task Shell", PRI_MAX, &task_shell, NULL);
 }
 
 static void task_1(void *param UNUSED) {
     int i = 0;
-    while(i < 100) {
+    while (i < 100) {
         printf("yeah~I'm the target!\n");
         ++i;
     }
@@ -105,5 +114,9 @@ static void task_2(void *param UNUSED) {
 static void task_3(void *param UNUSED) {
     tid_t *target_tid = param;
     thread_wait(*target_tid);
+}
+
+static void task_shell(void *param UNUSED) {
+    run_shell();
 }
 
