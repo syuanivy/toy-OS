@@ -143,7 +143,7 @@ static void task_busy_sleeper(void *param UNUSED) {
 
 static void task_nonbusy_sleeper(void *param UNUSED) {
   printf("\nI'm the non busy sleeper and I will fall asleep for 2 seconds\n");
-  timer_msleep_nonbusy(200000);
+  timer_msleep_nonbusy(2000000);
   printf("\nI'm the non busy sleeper and now I wake up\n");
 }
 

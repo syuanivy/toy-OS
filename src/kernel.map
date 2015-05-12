@@ -1,0 +1,690 @@
+Archive member included because of file (symbol)
+
+libgcc/libgcc.a(_udivsi3.o)   build/stdio.o (__aeabi_uidiv)
+libgcc/libgcc.a(_divsi3.o)    build/stdio.o (__aeabi_idivmod)
+libgcc/libgcc.a(_dvmd_tls.o)  libgcc/libgcc.a(_udivsi3.o) (__aeabi_idiv0)
+libgcc/libgcc.a(_aeabi_uldivmod.o)
+                              build/stdio.o (__aeabi_uldivmod)
+libgcc/libgcc.a(bpabi.o)      libgcc/libgcc.a(_aeabi_uldivmod.o) (__gnu_uldivmod_helper)
+libgcc/libgcc.a(_divdi3.o)    libgcc/libgcc.a(bpabi.o) (__divdi3)
+libgcc/libgcc.a(_udivdi3.o)   libgcc/libgcc.a(bpabi.o) (__udivdi3)
+libgcc/libgcc.a(unwind-arm.o)
+                              libgcc/libgcc.a(_divdi3.o) (__aeabi_unwind_cpp_pr0)
+libgcc/libgcc.a(libunwind.o)  libgcc/libgcc.a(unwind-arm.o) (restore_core_regs)
+libgcc/libgcc.a(pr-support.o)
+                              libgcc/libgcc.a(unwind-arm.o) (__gnu_unwind_execute)
+libgcc/libgcc.a(_clzsi2.o)    libgcc/libgcc.a(_divdi3.o) (__clzsi2)
+
+Discarded input sections
+
+ .ARM.attributes
+                0x0000000000000000       0x14 build/contextSwitch.o
+ .ARM.attributes
+                0x0000000000000000       0x14 build/drawing.o
+ .ARM.attributes
+                0x0000000000000000       0x14 build/frameBufferInfo.o
+ .ARM.attributes
+                0x0000000000000000       0x14 build/gpioFunction.o
+ .ARM.attributes
+                0x0000000000000000       0x14 build/interruptsHandlers.o
+ .ARM.attributes
+                0x0000000000000000       0x14 build/mailbox.o
+ .ARM.attributes
+                0x0000000000000000       0x14 build/memoryCopy.o
+ .ARM.attributes
+                0x0000000000000000       0x14 build/start.o
+ .comment       0x0000000000000000       0x71 build/framebuffer.o
+ .ARM.attributes
+                0x0000000000000000       0x38 build/framebuffer.o
+ .comment       0x0000000000000000       0x71 build/gpio.o
+ .ARM.attributes
+                0x0000000000000000       0x38 build/gpio.o
+ .comment       0x0000000000000000       0x71 build/serial.o
+ .ARM.attributes
+                0x0000000000000000       0x38 build/serial.o
+ .comment       0x0000000000000000       0x71 build/timer.o
+ .ARM.attributes
+                0x0000000000000000       0x38 build/timer.o
+ .comment       0x0000000000000000       0x71 build/video.o
+ .ARM.attributes
+                0x0000000000000000       0x38 build/video.o
+ .comment       0x0000000000000000       0x71 build/debug.o
+ .ARM.attributes
+                0x0000000000000000       0x38 build/debug.o
+ .comment       0x0000000000000000       0x71 build/random.o
+ .ARM.attributes
+                0x0000000000000000       0x38 build/random.o
+ .comment       0x0000000000000000       0x71 build/stdio.o
+ .ARM.attributes
+                0x0000000000000000       0x38 build/stdio.o
+ .comment       0x0000000000000000       0x71 build/stdlib.o
+ .ARM.attributes
+                0x0000000000000000       0x38 build/stdlib.o
+ .comment       0x0000000000000000       0x71 build/string.o
+ .ARM.attributes
+                0x0000000000000000       0x38 build/string.o
+ .comment       0x0000000000000000       0x71 build/bitmap.o
+ .ARM.attributes
+                0x0000000000000000       0x38 build/bitmap.o
+ .comment       0x0000000000000000       0x71 build/console.o
+ .ARM.attributes
+                0x0000000000000000       0x38 build/console.o
+ .comment       0x0000000000000000       0x71 build/hash.o
+ .ARM.attributes
+                0x0000000000000000       0x38 build/hash.o
+ .comment       0x0000000000000000       0x71 build/list.o
+ .ARM.attributes
+                0x0000000000000000       0x38 build/list.o
+ .comment       0x0000000000000000       0x71 build/init.o
+ .ARM.attributes
+                0x0000000000000000       0x38 build/init.o
+ .comment       0x0000000000000000       0x71 build/interrupt.o
+ .ARM.attributes
+                0x0000000000000000       0x38 build/interrupt.o
+ .comment       0x0000000000000000       0x71 build/malloc.o
+ .ARM.attributes
+                0x0000000000000000       0x38 build/malloc.o
+ .comment       0x0000000000000000       0x71 build/palloc.o
+ .ARM.attributes
+                0x0000000000000000       0x38 build/palloc.o
+ .comment       0x0000000000000000       0x71 build/shell.o
+ .ARM.attributes
+                0x0000000000000000       0x38 build/shell.o
+ .comment       0x0000000000000000       0x71 build/synch.o
+ .ARM.attributes
+                0x0000000000000000       0x38 build/synch.o
+ .comment       0x0000000000000000       0x71 build/thread.o
+ .ARM.attributes
+                0x0000000000000000       0x38 build/thread.o
+ .debug_frame   0x0000000000000000       0x20 libgcc/libgcc.a(_udivsi3.o)
+ .ARM.attributes
+                0x0000000000000000       0x18 libgcc/libgcc.a(_udivsi3.o)
+ .debug_line    0x0000000000000000       0x8a libgcc/libgcc.a(_udivsi3.o)
+ .debug_info    0x0000000000000000       0x99 libgcc/libgcc.a(_udivsi3.o)
+ .debug_abbrev  0x0000000000000000       0x14 libgcc/libgcc.a(_udivsi3.o)
+ .debug_aranges
+                0x0000000000000000       0x20 libgcc/libgcc.a(_udivsi3.o)
+ .debug_frame   0x0000000000000000       0x20 libgcc/libgcc.a(_divsi3.o)
+ .ARM.attributes
+                0x0000000000000000       0x18 libgcc/libgcc.a(_divsi3.o)
+ .debug_line    0x0000000000000000       0x96 libgcc/libgcc.a(_divsi3.o)
+ .debug_info    0x0000000000000000       0x99 libgcc/libgcc.a(_divsi3.o)
+ .debug_abbrev  0x0000000000000000       0x14 libgcc/libgcc.a(_divsi3.o)
+ .debug_aranges
+                0x0000000000000000       0x20 libgcc/libgcc.a(_divsi3.o)
+ .ARM.attributes
+                0x0000000000000000       0x18 libgcc/libgcc.a(_dvmd_tls.o)
+ .debug_line    0x0000000000000000       0x61 libgcc/libgcc.a(_dvmd_tls.o)
+ .debug_info    0x0000000000000000       0x99 libgcc/libgcc.a(_dvmd_tls.o)
+ .debug_abbrev  0x0000000000000000       0x14 libgcc/libgcc.a(_dvmd_tls.o)
+ .debug_aranges
+                0x0000000000000000       0x20 libgcc/libgcc.a(_dvmd_tls.o)
+ .ARM.attributes
+                0x0000000000000000       0x18 libgcc/libgcc.a(_aeabi_uldivmod.o)
+ .debug_line    0x0000000000000000       0x66 libgcc/libgcc.a(_aeabi_uldivmod.o)
+ .debug_info    0x0000000000000000       0x95 libgcc/libgcc.a(_aeabi_uldivmod.o)
+ .debug_abbrev  0x0000000000000000       0x14 libgcc/libgcc.a(_aeabi_uldivmod.o)
+ .debug_aranges
+                0x0000000000000000       0x20 libgcc/libgcc.a(_aeabi_uldivmod.o)
+ .debug_info    0x0000000000000000      0x174 libgcc/libgcc.a(bpabi.o)
+ .debug_abbrev  0x0000000000000000       0xb7 libgcc/libgcc.a(bpabi.o)
+ .debug_loc     0x0000000000000000       0xe0 libgcc/libgcc.a(bpabi.o)
+ .debug_aranges
+                0x0000000000000000       0x20 libgcc/libgcc.a(bpabi.o)
+ .debug_line    0x0000000000000000       0x67 libgcc/libgcc.a(bpabi.o)
+ .debug_str     0x0000000000000000       0xef libgcc/libgcc.a(bpabi.o)
+ .comment       0x0000000000000000       0x12 libgcc/libgcc.a(bpabi.o)
+ .ARM.attributes
+                0x0000000000000000       0x30 libgcc/libgcc.a(bpabi.o)
+ .debug_frame   0x0000000000000000       0x54 libgcc/libgcc.a(bpabi.o)
+ .debug_info    0x0000000000000000      0x5ec libgcc/libgcc.a(_divdi3.o)
+ .debug_abbrev  0x0000000000000000      0x165 libgcc/libgcc.a(_divdi3.o)
+ .debug_loc     0x0000000000000000      0xb77 libgcc/libgcc.a(_divdi3.o)
+ .debug_aranges
+                0x0000000000000000       0x20 libgcc/libgcc.a(_divdi3.o)
+ .debug_ranges  0x0000000000000000       0xc8 libgcc/libgcc.a(_divdi3.o)
+ .debug_line    0x0000000000000000       0xdb libgcc/libgcc.a(_divdi3.o)
+ .debug_str     0x0000000000000000      0x1a3 libgcc/libgcc.a(_divdi3.o)
+ .comment       0x0000000000000000       0x12 libgcc/libgcc.a(_divdi3.o)
+ .ARM.attributes
+                0x0000000000000000       0x30 libgcc/libgcc.a(_divdi3.o)
+ .debug_frame   0x0000000000000000       0x38 libgcc/libgcc.a(_divdi3.o)
+ .debug_info    0x0000000000000000      0x5ab libgcc/libgcc.a(_udivdi3.o)
+ .debug_abbrev  0x0000000000000000      0x154 libgcc/libgcc.a(_udivdi3.o)
+ .debug_loc     0x0000000000000000      0xc8c libgcc/libgcc.a(_udivdi3.o)
+ .debug_aranges
+                0x0000000000000000       0x20 libgcc/libgcc.a(_udivdi3.o)
+ .debug_ranges  0x0000000000000000       0xd8 libgcc/libgcc.a(_udivdi3.o)
+ .debug_line    0x0000000000000000       0xce libgcc/libgcc.a(_udivdi3.o)
+ .debug_str     0x0000000000000000      0x1a4 libgcc/libgcc.a(_udivdi3.o)
+ .comment       0x0000000000000000       0x12 libgcc/libgcc.a(_udivdi3.o)
+ .ARM.attributes
+                0x0000000000000000       0x30 libgcc/libgcc.a(_udivdi3.o)
+ .debug_frame   0x0000000000000000       0x38 libgcc/libgcc.a(_udivdi3.o)
+ .debug_info    0x0000000000000000     0x1d4d libgcc/libgcc.a(unwind-arm.o)
+ .debug_abbrev  0x0000000000000000      0x48f libgcc/libgcc.a(unwind-arm.o)
+ .debug_loc     0x0000000000000000     0x18d0 libgcc/libgcc.a(unwind-arm.o)
+ .debug_aranges
+                0x0000000000000000       0x20 libgcc/libgcc.a(unwind-arm.o)
+ .debug_ranges  0x0000000000000000      0x138 libgcc/libgcc.a(unwind-arm.o)
+ .debug_line    0x0000000000000000      0x538 libgcc/libgcc.a(unwind-arm.o)
+ .debug_str     0x0000000000000000      0xb7f libgcc/libgcc.a(unwind-arm.o)
+ .comment       0x0000000000000000       0x12 libgcc/libgcc.a(unwind-arm.o)
+ .ARM.attributes
+                0x0000000000000000       0x30 libgcc/libgcc.a(unwind-arm.o)
+ .debug_frame   0x0000000000000000      0x290 libgcc/libgcc.a(unwind-arm.o)
+ .ARM.attributes
+                0x0000000000000000       0x1c libgcc/libgcc.a(libunwind.o)
+ .debug_line    0x0000000000000000       0xaf libgcc/libgcc.a(libunwind.o)
+ .debug_info    0x0000000000000000       0x99 libgcc/libgcc.a(libunwind.o)
+ .debug_abbrev  0x0000000000000000       0x14 libgcc/libgcc.a(libunwind.o)
+ .debug_aranges
+                0x0000000000000000       0x20 libgcc/libgcc.a(libunwind.o)
+ .debug_info    0x0000000000000000      0xa5b libgcc/libgcc.a(pr-support.o)
+ .debug_abbrev  0x0000000000000000      0x26c libgcc/libgcc.a(pr-support.o)
+ .debug_loc     0x0000000000000000      0x652 libgcc/libgcc.a(pr-support.o)
+ .debug_aranges
+                0x0000000000000000       0x20 libgcc/libgcc.a(pr-support.o)
+ .debug_ranges  0x0000000000000000       0x48 libgcc/libgcc.a(pr-support.o)
+ .debug_line    0x0000000000000000      0x1c4 libgcc/libgcc.a(pr-support.o)
+ .debug_str     0x0000000000000000      0x4de libgcc/libgcc.a(pr-support.o)
+ .comment       0x0000000000000000       0x12 libgcc/libgcc.a(pr-support.o)
+ .ARM.attributes
+                0x0000000000000000       0x30 libgcc/libgcc.a(pr-support.o)
+ .debug_frame   0x0000000000000000       0xe4 libgcc/libgcc.a(pr-support.o)
+ .ARM.attributes
+                0x0000000000000000       0x18 libgcc/libgcc.a(_clzsi2.o)
+ .debug_line    0x0000000000000000       0x6e libgcc/libgcc.a(_clzsi2.o)
+ .debug_info    0x0000000000000000       0x99 libgcc/libgcc.a(_clzsi2.o)
+ .debug_abbrev  0x0000000000000000       0x14 libgcc/libgcc.a(_clzsi2.o)
+ .debug_aranges
+                0x0000000000000000       0x20 libgcc/libgcc.a(_clzsi2.o)
+
+Memory Configuration
+
+Name             Origin             Length             Attributes
+*default*        0x0000000000000000 0xffffffffffffffff
+
+Linker script and memory map
+
+LOAD build/contextSwitch.o
+LOAD build/drawing.o
+LOAD build/frameBufferInfo.o
+LOAD build/gpioFunction.o
+LOAD build/interruptsHandlers.o
+LOAD build/mailbox.o
+LOAD build/memoryCopy.o
+LOAD build/start.o
+LOAD build/framebuffer.o
+LOAD build/gpio.o
+LOAD build/serial.o
+LOAD build/timer.o
+LOAD build/video.o
+LOAD build/debug.o
+LOAD build/random.o
+LOAD build/stdio.o
+LOAD build/stdlib.o
+LOAD build/string.o
+LOAD build/bitmap.o
+LOAD build/console.o
+LOAD build/hash.o
+LOAD build/list.o
+LOAD build/init.o
+LOAD build/interrupt.o
+LOAD build/malloc.o
+LOAD build/palloc.o
+LOAD build/shell.o
+LOAD build/synch.o
+LOAD build/thread.o
+
+.init           0x0000000000008000       0x8c
+ *(.init)
+ .init          0x0000000000008000       0x8c build/start.o
+                0x0000000000008000                _start
+
+.text           0x000000000000808c     0xe3d0
+ *(.text)
+ .text          0x000000000000808c       0xd4 build/contextSwitch.o
+                0x000000000000808c                save_context
+                0x00000000000080e8                save_and_switch_context
+ .text          0x0000000000008160      0x178 build/drawing.o
+                0x0000000000008160                SetForeColour
+                0x0000000000008178                GetForeColour
+                0x0000000000008184                SetGraphicsAddress
+                0x0000000000008190                GetGraphicsAddress
+                0x000000000000819c                DrawPixel
+                0x00000000000081e4                DrawLine
+                0x0000000000008260                DrawCharacter
+ .text          0x00000000000082d8       0x60 build/frameBufferInfo.o
+                0x00000000000082d8                InitialiseFrameBuffer
+ .text          0x0000000000008338       0x98 build/gpioFunction.o
+                0x0000000000008338                GetGpioAddress
+                0x0000000000008340                SetGpioFunction
+                0x0000000000008390                SetGpio
+ .text          0x00000000000083d0      0x130 build/interruptsHandlers.o
+                0x00000000000083d0                print_executing_interrupt
+                0x00000000000083e0                generate_swi_interrupt
+                0x00000000000083e8                swi_handler_int
+                0x000000000000844c                irq_handler_int
+                0x00000000000084ac                get_cpsr_value
+                0x00000000000084b4                enable_irq_interruptions
+                0x00000000000084c4                disable_irq_interruptions
+                0x00000000000084d4                enable_fiq_interruptions
+                0x00000000000084e4                disable_fiq_interruptions
+                0x00000000000084f4                get_current_sp
+ .text          0x0000000000008500       0x6c build/mailbox.o
+                0x0000000000008500                GetMailboxBase
+                0x0000000000008508                MailboxRead
+                0x000000000000853c                MailboxWrite
+ .text          0x000000000000856c       0x70 build/memoryCopy.o
+                0x000000000000856c                memory_fastest_copy
+                0x00000000000085bc                memory_fast_copy
+ .text          0x00000000000085dc        0x0 build/start.o
+ .text          0x00000000000085dc       0x58 build/framebuffer.o
+                0x00000000000085dc                framebuffer_init
+ .text          0x0000000000008634       0x50 build/gpio.o
+                0x0000000000008634                gpio_enable_function
+                0x000000000000865c                gpio_set_register
+ .text          0x0000000000008684      0x32c build/serial.o
+                0x0000000000008684                serial_init
+                0x0000000000008694                serial_putc
+                0x00000000000086bc                serial_flush
+                0x00000000000086d0                serial_notify
+                0x0000000000008778                uart_init
+                0x0000000000008838                uart_putc_helper
+                0x0000000000008888                uart_putc
+                0x00000000000088d0                uart_getc
+                0x0000000000008914                uart_write
+                0x0000000000008970                uart_puts
+                0x00000000000089a0                test_serial
+ .text          0x00000000000089b0      0x3c8 build/timer.o
+                0x00000000000089b0                timer_init
+                0x00000000000089fc                timer_get_timestamp
+                0x0000000000008a20                timer_msleep
+                0x0000000000008a7c                timer_msleep_nonbusy
+                0x0000000000008bcc                timer_wakeup
+ .text          0x0000000000008d78      0x990 build/video.o
+                0x0000000000008d78                video_init
+                0x0000000000008df4                video_clean
+                0x0000000000008ea8                video_putc
+ .text          0x0000000000009708      0x128 build/debug.o
+                0x0000000000009708                debug_panic
+                0x000000000000978c                debug_print_bits_int
+                0x0000000000009808                abort
+ .text          0x0000000000009830      0x2c8 build/random.o
+                0x0000000000009878                random_init
+                0x0000000000009998                random_bytes
+                0x0000000000009acc                random_ulong
+ .text          0x0000000000009af8     0x1764 build/stdio.o
+                0x0000000000009b80                vsnprintf
+                0x0000000000009c78                snprintf
+                0x0000000000009cc8                printf
+                0x0000000000009d08                __vprintf
+                0x000000000000aeac                __printf
+                0x000000000000aef0                hex_dump
+                0x000000000000b1a8                print_human_readable_size
+ .text          0x000000000000b25c      0x760 build/stdlib.o
+                0x000000000000b314                atoi
+                0x000000000000b49c                qsort
+                0x000000000000b72c                sort
+                0x000000000000b874                bsearch
+                0x000000000000b8c8                binary_search
+ .text          0x000000000000b9bc      0xcf0 build/string.o
+                0x000000000000b9bc                memcpy
+                0x000000000000ba90                memmove
+                0x000000000000bbd8                memcmp
+                0x000000000000bce4                strcmp
+                0x000000000000bde4                memchr
+                0x000000000000be94                strchr
+                0x000000000000bf2c                strcspn
+                0x000000000000bfac                strpbrk
+                0x000000000000c018                strrchr
+                0x000000000000c08c                strspn
+                0x000000000000c10c                strstr
+                0x000000000000c1c0                strtok_r
+                0x000000000000c334                memset
+                0x000000000000c3d0                strlen
+                0x000000000000c450                strnlen
+                0x000000000000c4b8                strlcpy
+                0x000000000000c590                strlcat
+ .text          0x000000000000c6ac      0x9e8 build/bitmap.o
+                0x000000000000c75c                bitmap_create
+                0x000000000000c800                bitmap_create_in_buf
+                0x000000000000c890                bitmap_buf_size
+                0x000000000000c8bc                bitmap_destroy
+                0x000000000000c8f8                bitmap_size
+                0x000000000000c920                bitmap_set
+                0x000000000000c9c0                bitmap_test
+                0x000000000000ca74                bitmap_set_all
+                0x000000000000cadc                bitmap_set_multiple
+                0x000000000000cbcc                bitmap_mark
+                0x000000000000cc38                bitmap_reset
+                0x000000000000cca8                bitmap_contains
+                0x000000000000cdb4                bitmap_any
+                0x000000000000cdf0                bitmap_none
+                0x000000000000ce4c                bitmap_all
+                0x000000000000cea8                bitmap_scan
+                0x000000000000cfc8                bitmap_scan_and_flip
+                0x000000000000d04c                bitmap_dump
+ .text          0x000000000000d094      0x3b8 build/console.o
+                0x000000000000d094                console_init
+                0x000000000000d0bc                console_panic
+                0x000000000000d0e0                console_print_stats
+                0x000000000000d250                vprintf
+                0x000000000000d29c                puts
+                0x000000000000d2f8                putbuf
+                0x000000000000d34c                putchar
+ .text          0x000000000000d44c      0xc24 build/hash.o
+                0x000000000000d44c                hash_init
+                0x000000000000d4fc                hash_clear
+                0x000000000000d5d0                hash_destroy
+                0x000000000000d614                hash_insert
+                0x000000000000d680                hash_replace
+                0x000000000000d6f8                hash_find
+                0x000000000000d73c                hash_delete
+                0x000000000000d7a4                hash_apply
+                0x000000000000d890                hash_first
+                0x000000000000d93c                hash_next
+                0x000000000000da58                hash_cur
+                0x000000000000da80                hash_size
+                0x000000000000daa8                hash_empty
+                0x000000000000dae0                hash_bytes
+                0x000000000000db84                hash_string
+                0x000000000000dc20                hash_int
+ .text          0x000000000000e070     0x1280 build/list.o
+                0x000000000000e190                list_init
+                0x000000000000e208                list_begin
+                0x000000000000e258                list_next
+                0x000000000000e2c4                list_end
+                0x000000000000e314                list_rbegin
+                0x000000000000e364                list_prev
+                0x000000000000e3d0                list_rend
+                0x000000000000e41c                list_head
+                0x000000000000e468                list_tail
+                0x000000000000e4b8                list_insert
+                0x000000000000e574                list_splice
+                0x000000000000e6ac                list_push_front
+                0x000000000000e6e0                list_push_back
+                0x000000000000e714                list_remove
+                0x000000000000e794                list_pop_front
+                0x000000000000e7c8                list_pop_back
+                0x000000000000e7fc                list_front
+                0x000000000000e85c                list_back
+                0x000000000000e8c0                list_size
+                0x000000000000e928                list_empty
+                0x000000000000e9b4                list_reverse
+                0x000000000000edcc                list_sort
+                0x000000000000ef5c                list_insert_ordered
+                0x000000000000f060                list_unique
+                0x000000000000f1a0                list_max
+                0x000000000000f248                list_min
+ .text          0x000000000000f2f0      0x350 build/init.o
+                0x000000000000f31c                init
+ .text          0x000000000000f640      0x9c4 build/interrupt.o
+                0x000000000000f640                interrupts_init
+                0x000000000000f6e8                interrupts_register_irq
+                0x000000000000f764                interrupts_register_swi
+                0x000000000000f7a4                interrupts_get_irq_name
+                0x000000000000f7fc                interrupts_get_swi_name
+                0x000000000000f820                interrupts_get_level
+                0x000000000000f858                interrupts_set_level
+                0x000000000000f898                interrupts_enable
+                0x000000000000f8c4                interrupts_disable
+                0x000000000000f8f0                interrupts_print_status
+                0x000000000000f98c                interrupts_context
+                0x000000000000f9b0                interrupts_was_irq_generated
+                0x000000000000f9d4                interrupts_yield_on_return
+                0x000000000000f9f8                interrupts_dispatch_irq
+                0x000000000000fc40                interrupts_dispatch_swi
+                0x000000000000fcf4                interrupts_debug
+ .text          0x0000000000010004      0x8b0 build/malloc.o
+                0x000000000001005c                malloc_init
+                0x0000000000010160                malloc
+                0x00000000000103c0                calloc
+                0x00000000000104b8                realloc
+                0x000000000001055c                free
+ .text          0x00000000000108b4      0x57c build/palloc.o
+                0x0000000000010908                palloc_init
+                0x00000000000109e0                palloc_get_multiple
+                0x0000000000010b14                palloc_get_page
+                0x0000000000010b48                palloc_free_multiple
+                0x0000000000010cb0                palloc_free_page
+ .text          0x0000000000010e30      0x2f4 build/shell.o
+                0x0000000000010f48                run_shell
+ .text          0x0000000000011124      0x950 build/synch.o
+                0x0000000000011124                sema_init
+                0x0000000000011188                sema_down
+                0x000000000001125c                sema_try_down
+                0x00000000000112f8                sema_up
+                0x00000000000113b0                sema_self_test
+                0x00000000000114a0                lock_init
+                0x0000000000011504                lock_acquire
+                0x00000000000115c4                lock_try_acquire
+                0x0000000000011674                lock_release
+                0x00000000000116fc                lock_held_by_current_thread
+                0x0000000000011764                cond_init
+                0x00000000000117b8                cond_wait
+                0x00000000000118c8                cond_signal
+                0x00000000000119d4                cond_broadcast
+ .text          0x0000000000011a74     0x13fc build/thread.o
+                0x0000000000011aa0                thread_init
+                0x0000000000011d30                thread_start
+                0x0000000000011d80                thread_wait
+                0x0000000000011f08                thread_tick
+                0x0000000000011fb0                thread_print_stats
+                0x0000000000012004                thread_create
+                0x00000000000121dc                thread_block
+                0x0000000000012284                thread_unblock
+                0x0000000000012344                thread_name
+                0x0000000000012360                thread_current
+                0x00000000000123f8                thread_tid
+                0x0000000000012414                thread_exit
+                0x0000000000012578                thread_yield
+                0x000000000001292c                thread_schedule_tail
+                0x0000000000012a20                thread_foreach
+                0x0000000000012ac8                thread_set_priority
+                0x0000000000012af0                thread_get_priority
+                0x0000000000012b0c                thread_set_nice
+                0x0000000000012b28                thread_get_nice
+                0x0000000000012b44                thread_get_load_avg
+                0x0000000000012b60                thread_get_recent_cpu
+ .text          0x0000000000012e70      0x114 libgcc/libgcc.a(_udivsi3.o)
+                0x0000000000012e70                __udivsi3
+                0x0000000000012e70                __aeabi_uidiv
+                0x0000000000012f64                __aeabi_uidivmod
+ .text          0x0000000000012f84      0x148 libgcc/libgcc.a(_divsi3.o)
+                0x0000000000012f84                __aeabi_idiv
+                0x0000000000012f84                __divsi3
+                0x00000000000130ac                __aeabi_idivmod
+ .text          0x00000000000130cc        0x4 libgcc/libgcc.a(_dvmd_tls.o)
+                0x00000000000130cc                __aeabi_ldiv0
+                0x00000000000130cc                __aeabi_idiv0
+ .text          0x00000000000130d0       0x3c libgcc/libgcc.a(_aeabi_uldivmod.o)
+                0x00000000000130d0                __aeabi_uldivmod
+ .text          0x000000000001310c       0x84 libgcc/libgcc.a(bpabi.o)
+                0x000000000001310c                __gnu_ldivmod_helper
+                0x0000000000013150                __gnu_uldivmod_helper
+ .text          0x0000000000013190      0x4f8 libgcc/libgcc.a(_divdi3.o)
+                0x0000000000013190                __divdi3
+ .text          0x0000000000013688      0x498 libgcc/libgcc.a(_udivdi3.o)
+                0x0000000000013688                __udivdi3
+ .text          0x0000000000013b20      0xfb0 libgcc/libgcc.a(unwind-arm.o)
+                0x0000000000013fa8                _Unwind_GetCFA
+                0x0000000000013fb0                __gnu_Unwind_RaiseException
+                0x000000000001405c                __gnu_Unwind_ForcedUnwind
+                0x0000000000014080                __gnu_Unwind_Resume
+                0x00000000000140f8                __gnu_Unwind_Resume_or_Rethrow
+                0x0000000000014118                _Unwind_Complete
+                0x000000000001411c                _Unwind_DeleteException
+                0x0000000000014140                _Unwind_VRS_Get
+                0x00000000000141b4                _Unwind_VRS_Set
+                0x0000000000014658                __aeabi_unwind_cpp_pr2
+                0x0000000000014660                __aeabi_unwind_cpp_pr1
+                0x0000000000014668                __aeabi_unwind_cpp_pr0
+                0x0000000000014670                __gnu_Unwind_Backtrace
+                0x000000000001473c                _Unwind_VRS_Pop
+ .text          0x0000000000014ad0      0x1b0 libgcc/libgcc.a(libunwind.o)
+                0x0000000000014ad0                __restore_core_regs
+                0x0000000000014ad0                restore_core_regs
+                0x0000000000014aec                __gnu_Unwind_Restore_VFP
+                0x0000000000014af4                __gnu_Unwind_Save_VFP
+                0x0000000000014afc                __gnu_Unwind_Restore_VFP_D
+                0x0000000000014b04                __gnu_Unwind_Save_VFP_D
+                0x0000000000014b0c                __gnu_Unwind_Restore_VFP_D_16_to_31
+                0x0000000000014b14                __gnu_Unwind_Save_VFP_D_16_to_31
+                0x0000000000014b1c                __gnu_Unwind_Restore_WMMXD
+                0x0000000000014b60                __gnu_Unwind_Save_WMMXD
+                0x0000000000014ba4                __gnu_Unwind_Restore_WMMXC
+                0x0000000000014bb8                __gnu_Unwind_Save_WMMXC
+                0x0000000000014bcc                _Unwind_RaiseException
+                0x0000000000014bcc                ___Unwind_RaiseException
+                0x0000000000014bf0                ___Unwind_Resume
+                0x0000000000014bf0                _Unwind_Resume
+                0x0000000000014c14                ___Unwind_Resume_or_Rethrow
+                0x0000000000014c14                _Unwind_Resume_or_Rethrow
+                0x0000000000014c38                _Unwind_ForcedUnwind
+                0x0000000000014c38                ___Unwind_ForcedUnwind
+                0x0000000000014c5c                _Unwind_Backtrace
+                0x0000000000014c5c                ___Unwind_Backtrace
+ .text          0x0000000000014c80      0x53c libgcc/libgcc.a(pr-support.o)
+                0x0000000000014d14                __gnu_unwind_execute
+                0x0000000000015130                __gnu_unwind_frame
+                0x0000000000015178                _Unwind_GetRegionStart
+                0x000000000001518c                _Unwind_GetLanguageSpecificData
+                0x00000000000151ac                _Unwind_GetDataRelBase
+                0x00000000000151b4                _Unwind_GetTextRelBase
+ .text          0x00000000000151bc       0x48 libgcc/libgcc.a(_clzsi2.o)
+                0x00000000000151bc                __clzsi2
+ *(.rodata)
+ .rodata        0x0000000000015204      0x1fc build/timer.o
+ .rodata        0x0000000000015400       0x70 build/debug.o
+ .rodata        0x0000000000015470      0x134 build/stdio.o
+ .rodata        0x00000000000155a4       0x34 build/stdlib.o
+ .rodata        0x00000000000155d8       0x80 build/string.o
+ .rodata        0x0000000000015658       0x98 build/bitmap.o
+ .rodata        0x00000000000156f0       0x64 build/console.o
+ .rodata        0x0000000000015754       0x6c build/hash.o
+ .rodata        0x00000000000157c0      0x11c build/list.o
+ .rodata        0x00000000000158dc      0x1f8 build/init.o
+ .rodata        0x0000000000015ad4      0x184 build/interrupt.o
+ .rodata        0x0000000000015c58       0x78 build/malloc.o
+ .rodata        0x0000000000015cd0       0xf8 build/palloc.o
+ .rodata        0x0000000000015dc8      0x1f0 build/shell.o
+ .rodata        0x0000000000015fb8       0xf0 build/synch.o
+ .rodata        0x00000000000160a8      0x3b4 build/thread.o
+
+.data           0x0000000000017000     0x2060
+ *(.data)
+ .data          0x0000000000017000        0x0 build/contextSwitch.o
+ .data          0x0000000000017000      0x810 build/drawing.o
+ *fill*         0x0000000000017810      0x7f0 
+ .data          0x0000000000018000     0x1000 build/frameBufferInfo.o
+                0x0000000000018000                FrameBufferInfo
+ .data          0x0000000000019000        0x0 build/gpioFunction.o
+ .data          0x0000000000019000       0x40 build/interruptsHandlers.o
+                0x0000000000019000                exec_int_msg
+ .data          0x0000000000019040        0x0 build/mailbox.o
+ .data          0x0000000000019040        0x0 build/memoryCopy.o
+ .data          0x0000000000019040        0x0 build/start.o
+ .data          0x0000000000019040        0x0 build/framebuffer.o
+ .data          0x0000000000019040        0x0 build/gpio.o
+ .data          0x0000000000019040        0x0 build/serial.o
+ .data          0x0000000000019040        0x0 build/timer.o
+ .data          0x0000000000019040        0x0 build/video.o
+ .data          0x0000000000019040        0x0 build/debug.o
+ .data          0x0000000000019040        0x0 build/random.o
+ .data          0x0000000000019040       0x18 build/stdio.o
+ .data          0x0000000000019058        0x0 build/stdlib.o
+ .data          0x0000000000019058        0x0 build/string.o
+ .data          0x0000000000019058        0x0 build/bitmap.o
+ .data          0x0000000000019058        0x0 build/console.o
+ .data          0x0000000000019058        0x0 build/hash.o
+ .data          0x0000000000019058        0x0 build/list.o
+ .data          0x0000000000019058        0x4 build/init.o
+ .data          0x000000000001905c        0x0 build/interrupt.o
+ .data          0x000000000001905c        0x0 build/malloc.o
+ .data          0x000000000001905c        0x0 build/palloc.o
+ .data          0x000000000001905c        0x0 build/shell.o
+ .data          0x000000000001905c        0x0 build/synch.o
+ .data          0x000000000001905c        0x4 build/thread.o
+ .data          0x0000000000019060        0x0 libgcc/libgcc.a(_udivsi3.o)
+ .data          0x0000000000019060        0x0 libgcc/libgcc.a(_divsi3.o)
+ .data          0x0000000000019060        0x0 libgcc/libgcc.a(_dvmd_tls.o)
+ .data          0x0000000000019060        0x0 libgcc/libgcc.a(_aeabi_uldivmod.o)
+ .data          0x0000000000019060        0x0 libgcc/libgcc.a(bpabi.o)
+ .data          0x0000000000019060        0x0 libgcc/libgcc.a(_divdi3.o)
+ .data          0x0000000000019060        0x0 libgcc/libgcc.a(_udivdi3.o)
+ .data          0x0000000000019060        0x0 libgcc/libgcc.a(unwind-arm.o)
+ .data          0x0000000000019060        0x0 libgcc/libgcc.a(libunwind.o)
+ .data          0x0000000000019060        0x0 libgcc/libgcc.a(pr-support.o)
+ .data          0x0000000000019060        0x0 libgcc/libgcc.a(_clzsi2.o)
+
+.bss            0x0000000000019060      0x640
+ *(.bss)
+ .bss           0x0000000000019060        0x0 build/contextSwitch.o
+ .bss           0x0000000000019060        0x0 build/drawing.o
+ .bss           0x0000000000019060        0x0 build/frameBufferInfo.o
+ .bss           0x0000000000019060        0x0 build/gpioFunction.o
+ .bss           0x0000000000019060        0x0 build/interruptsHandlers.o
+ .bss           0x0000000000019060        0x0 build/mailbox.o
+ .bss           0x0000000000019060        0x0 build/memoryCopy.o
+ .bss           0x0000000000019060        0x0 build/start.o
+ .bss           0x0000000000019060        0x0 build/framebuffer.o
+ .bss           0x0000000000019060        0x0 build/gpio.o
+ .bss           0x0000000000019060        0x0 build/serial.o
+ .bss           0x0000000000019060       0x10 build/timer.o
+ .bss           0x0000000000019070       0x20 build/video.o
+ .bss           0x0000000000019090        0x0 build/debug.o
+ .bss           0x0000000000019090      0x104 build/random.o
+ .bss           0x0000000000019194        0x0 build/stdio.o
+ .bss           0x0000000000019194        0x0 build/stdlib.o
+ .bss           0x0000000000019194        0x0 build/string.o
+ .bss           0x0000000000019194        0x0 build/bitmap.o
+ *fill*         0x0000000000019194        0x4 
+ .bss           0x0000000000019198       0x28 build/console.o
+ .bss           0x00000000000191c0        0x0 build/hash.o
+ .bss           0x00000000000191c0        0x0 build/list.o
+ .bss           0x00000000000191c0       0x4c build/init.o
+                0x0000000000019208                tmp_tid
+ .bss           0x000000000001920c      0x20c build/interrupt.o
+ .bss           0x0000000000019418      0x1e4 build/malloc.o
+ .bss           0x00000000000195fc       0x40 build/palloc.o
+ .bss           0x000000000001963c        0x0 build/shell.o
+ .bss           0x000000000001963c        0x0 build/synch.o
+ *fill*         0x000000000001963c        0x4 
+ .bss           0x0000000000019640       0x60 build/thread.o
+ .bss           0x00000000000196a0        0x0 libgcc/libgcc.a(_udivsi3.o)
+ .bss           0x00000000000196a0        0x0 libgcc/libgcc.a(_divsi3.o)
+ .bss           0x00000000000196a0        0x0 libgcc/libgcc.a(_dvmd_tls.o)
+ .bss           0x00000000000196a0        0x0 libgcc/libgcc.a(_aeabi_uldivmod.o)
+ .bss           0x00000000000196a0        0x0 libgcc/libgcc.a(bpabi.o)
+ .bss           0x00000000000196a0        0x0 libgcc/libgcc.a(_divdi3.o)
+ .bss           0x00000000000196a0        0x0 libgcc/libgcc.a(_udivdi3.o)
+ .bss           0x00000000000196a0        0x0 libgcc/libgcc.a(unwind-arm.o)
+ .bss           0x00000000000196a0        0x0 libgcc/libgcc.a(libunwind.o)
+ .bss           0x00000000000196a0        0x0 libgcc/libgcc.a(pr-support.o)
+ .bss           0x00000000000196a0        0x0 libgcc/libgcc.a(_clzsi2.o)
+
+.ARM.extab      0x00000000000196a0       0x30
+ *(.ARM.extab* .gnu.linkonce.armextab.*)
+ .ARM.extab     0x00000000000196a0        0x0 libgcc/libgcc.a(_divdi3.o)
+ .ARM.extab     0x00000000000196a0        0x0 libgcc/libgcc.a(_udivdi3.o)
+ .ARM.extab     0x00000000000196a0       0x18 libgcc/libgcc.a(unwind-arm.o)
+ .ARM.extab     0x00000000000196b8       0x18 libgcc/libgcc.a(pr-support.o)
+                0x00000000000196d0                __exidx_start = .
+
+.ARM.exidx      0x00000000000196d0       0xd0
+ *(.ARM.exidx* .gnu.linkonce.armexidx.*)
+ .ARM.exidx     0x00000000000196d0        0x8 libgcc/libgcc.a(_divdi3.o)
+ .ARM.exidx     0x00000000000196d8        0x0 libgcc/libgcc.a(_udivdi3.o)
+                                          0x8 (size before relaxing)
+ .ARM.exidx     0x00000000000196d8       0x90 libgcc/libgcc.a(unwind-arm.o)
+                                         0xd8 (size before relaxing)
+ .ARM.exidx     0x0000000000019768       0x38 libgcc/libgcc.a(pr-support.o)
+                                         0x48 (size before relaxing)
+                0x00000000000197a0                __exidx_end = .
+
+/DISCARD/
+ *(*)
+LOAD libgcc/libgcc.a
+OUTPUT(build/output.elf elf32-littlearm)

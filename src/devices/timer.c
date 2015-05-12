@@ -78,7 +78,6 @@ void timer_msleep_nonbusy(int microseconds){
   printf("\n after thread_current() is called");
   running_thread->wakeup_time = timer_get_timestamp() + microseconds;
   list_push_back(&sleep_list, &(running_thread->sleep_elem));
-  
   // the current thread will be blocked until microseconds later.
   printf(">>>>>>>>>>>>>>>>>>> yeah! I'm %s and I will sleep for %d microseconds!! <<<<<<<<<<<<<<<<<<<<\n", running_thread->name, microseconds);
   thread_block();
@@ -111,12 +110,14 @@ static void timer_irq_handler(struct interrupts_stack_frame *stack_frame) {
   // The System Timer compare has to be reseted after the timer interrupt.
   timer_reset_timer_compare(IRQ_1);
 
+  timer_wakeup();
+
   thread_tick(stack_frame);
 
   printf("\nWithin timer_irq_handler: before timer_wakeup()\n");
 
   //wake up sleeping threads if time is up
-  timer_wakeup();
+  
 
 
 
@@ -138,13 +139,14 @@ void timer_wakeup(){
       struct thread *sleeping_thread = list_entry(elem, struct thread, sleep_elem);
       printf("\nthread entry in sleep_list: %s\n", sleeping_thread->name);
       printf("\n wakeup_time: %d; timer_get_timestamp: %d\n", sleeping_thread->wakeup_time, timer_get_timestamp());
-      printf("\ncurrent status: %s\n", sleeping_thread->status);
+      printf("\ncurrent status: %d\n", sleeping_thread->status);
 
       if(sleeping_thread->wakeup_time <= timer_get_timestamp()){
         printf("\n !!!!!!!!!!!!!! wake up %s at %d\n", sleeping_thread->name, sleeping_thread->wakeup_time );
-        thread_unblock(sleeping_thread);
+        //thread_unblock(sleeping_thread);
         list_remove(elem);
         sleeping_thread->wakeup_time = -1;
+        thread_unblock(&sleeping_thread);
         printf("\n>>>>>>>>>>>>>>>>>>> yeah! I'm %s and I wake up!! <<<<<<<<<<<<<<<<<<<<\n", sleeping_thread->name);
       }       
   }  

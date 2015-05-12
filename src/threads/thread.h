@@ -117,6 +117,7 @@ struct thread {
   uint32_t magic;               /* Detects stack overflow. */
 };
 
+
 void thread_init(void);
 void thread_start();
 

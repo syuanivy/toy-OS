@@ -41,7 +41,6 @@ extern void save_and_switch_context(struct interrupts_stack_frame *cur_stack_fra
 /* List of processes in THREAD_READY state, that is, processes
    that are ready to run but not actually running. */
 static struct list ready_list;
-
 /* List of all processes.  Processes are added to this list
    when they are first scheduled and removed when they exit. */
 static struct list all_list;
@@ -345,6 +344,7 @@ void thread_block(void) {
    it may expect that it can atomically unblock a thread and
    update other data. */
 void thread_unblock(struct thread *t) {
+    printf("\nentering unblock\n");
     enum interrupts_level old_level;
 
     ASSERT(is_thread(t));
