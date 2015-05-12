@@ -1,4 +1,0 @@
-mkdir build
-arm-none-eabi-as -I arm_asm/ arm_asm/contextSwitch.s -o build/contextSwitch.o
-make: arm-none-eabi-as: No such file or directory
-make: *** [build/contextSwitch.o] Error 1
