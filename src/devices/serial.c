@@ -3,9 +3,36 @@
 #include <stddef.h>
 #include <stdint.h>
 #include <string.h>
+#include <stdio.h>
 
 #include "serial.h"
 #include "bcm2835.h"
+#include "interrupt.h"
+#include "thread.h"
+
+volatile static unsigned int rxhead;
+volatile static unsigned int rxtail;
+#define RXBUFMASK 0xFFF// a buffer of 4095 bytes at max
+volatile static unsigned char rxbuffer[RXBUFMASK + 1];
+
+static struct thread *uart_blocking_thread = NULL;
+
+void hexstrings(unsigned int d) {
+    //unsigned int ra;
+    unsigned int rb;
+    unsigned int rc;
+
+    rb = 32;
+    while (1) {
+        rb -= 4;
+        rc = (d >> rb)&0xF;
+        if (rc > 9) rc += 0x37;
+        else rc += 0x30;
+        uart_putc(rc);
+        if (rb == 0) break;
+    }
+    uart_putc(0x20);
+}
 
 void serial_init(void) {
     test_serial();
@@ -79,22 +106,18 @@ enum {
     UART0_TDR = (UART0_BASE + 0x8C),
 };
 
-volatile unsigned int rxhead;
-volatile unsigned int rxtail;
-#define RXBUFMASK 0xFFF// a buffer of 4095 bytes at max
-volatile unsigned char rxbuffer[RXBUFMASK+1];
-
 /* uart interrupt handler */
 static void uart_irq_handler(struct interrupts_stack_frame *stack_frame) {
-    // receive trigger level passed, meaning there are at least
-    // 4 bits waiting in FIFO for default trigger level.
-    while (1) {
-        if ((UART0_RIS & (1 << 4)) == 16) {
-            int c = mmio_read(UART0_DR);
-            rxbuffer[rxhead] = c & 0xFF;// get one byte
-            rxhead = (rxhead + 1) & RXBUFMASK;
+    // using receive timeout interrupt for unbuffered input.
+    
+    // receive interrupt triggered.
+    if ((mmio_read(UART0_MIS) & (1 << 6)) == 0x40) {
+        int c = mmio_read(UART0_DR);
+        rxbuffer[rxhead] = c & 0xFF; // put one byte into buffer
+        rxhead = (rxhead + 1) & RXBUFMASK;
+        if (uart_blocking_thread != NULL && uart_blocking_thread->status == THREAD_BLOCKED) {
+            thread_unblock(uart_blocking_thread);
         }
-        else break;
     }
     return;
 }
@@ -131,17 +154,18 @@ void uart_init() {
     // Enable FIFO & 8 bit data transmission (1 stop bit, no parity).
     mmio_write(UART0_LCRH, (1 << 4) | (1 << 5) | (1 << 6));
 
-    // Mask all interrupts. (except for the FIFO receive interrupt)
-    mmio_write(UART0_IMSC, (1 << 1) | (1 << 5) | (1 << 6) |
-            (1 << 7) | (1 << 8) | (1 << 9) | (1 << 10));
-    
-    // FIFO receive interrupt trigger level (7/8))
-//    mmio_write(UART0_IFLS, (1 << 5));
+    // Mask all interrupts.
+    mmio_write(UART0_IMSC, (1 << 4) | (1 << 6));
+//    mmio_write(UART0_IMSC, (1 << 1) | (1 << 4) | (1 << 5) | (1 << 6) |
+//            (1 << 7) | (1 << 8) | (1 << 9) | (1 << 10));
 
-    // Enable UART0, receive & transfer part of UART.
+    // FIFO receive interrupt trigger level (1/8))
+    //    mmio_write(UART0_IFLS, UART0_IFLS & 0xffffff37);
+
+    // Enable UART0, receive & transmit.
     mmio_write(UART0_CR, (1 << 0) | (1 << 8) | (1 << 9));
-    
-    // register uart interrupt handler
+
+    // register UART interrupt handler
     interrupts_register_irq(IRQ_UART, uart_irq_handler, "UART Interrupt");
 }
 
@@ -163,11 +187,18 @@ void uart_putc(unsigned char byte) {
 
 // Test using screen /dev/cu.PL2303-00001004 115200
 
-unsigned char uart_getc() {    
+unsigned char uart_getc() {
     // if the buffer is not empty, return data,
     // else block. the current thread will only be woke up
     // by uart interrupt handler.
-    if (rxtail == rxhead) thread_block();
+    // for now we should only use this function in the thread running shell.
+    if (rxtail == rxhead) {
+        // IMPORTANT: setup our blocking thread variable before blocking.
+        uart_blocking_thread = thread_current();
+        // disable interrupt and block the current thread.
+        interrupts_disable();
+        thread_block();
+    }
     unsigned char c = rxbuffer[rxtail];
     rxtail = (rxtail + 1) & RXBUFMASK;
     return c;

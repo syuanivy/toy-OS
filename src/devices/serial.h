@@ -8,6 +8,8 @@ void serial_putc (char);
 void serial_flush (void);
 void serial_notify (void);
 
+void uart_putc(unsigned char byte);
+unsigned char uart_getc();
 void test_serial();
 
 #endif /* devices/serial.h */
