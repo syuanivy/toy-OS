@@ -699,14 +699,15 @@ void set_status(struct thread *t, enum thread_status new_status) {
     uint32_t time_at_status = t->time_at_status;
     
     if (old_status != new_status) {
-    
+        
         //Set new status
         t->status = new_status;
-        t->time_at_status = timer_get_timestamp();
+        uint32_t time = timer_get_timestamp();
+        t->time_at_status = time;
         
         //Add to the total runtime if the thread is coming out of the running state
         if (old_status == THREAD_RUNNING) {
-            t->total_runtime += time_at_status;
+            t->total_runtime += time - time_at_status;
         }
     }
 }
