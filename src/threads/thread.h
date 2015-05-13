@@ -130,7 +130,7 @@ const char *thread_name (void);
 void thread_tick (struct interrupts_stack_frame *stack_frame);
 void thread_print_stats (void);
 
-void thread_wait ();
+void thread_wait (tid_t tid);
 static struct thread *thread_find(tid_t tid);
 void thread_exit (void);
 static void thread_unblock_waiting_threads(struct thread *t);

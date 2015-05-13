@@ -444,15 +444,11 @@ static void schedule() {
   ASSERT (cur->status != THREAD_RUNNING);
   ASSERT (is_thread (next));
 
-  //printf("\nKernel Scheduler");
-
-  if (interrupts_was_irq_generated()) {
-    //printf("\nScheduling a thread in interrupt.");
-    schedule_in_interrupt(cur, next);
-  } else {
-    //printf("\nScheduling a thread not in interrupt.");
-    schedule_not_in_interrupt(cur, next);
-  }
+    if (interrupts_was_irq_generated()) {
+        schedule_in_interrupt(cur, next);
+    } else {
+        schedule_not_in_interrupt(cur, next);
+    }
 }
 
 /* When an IRQ interrupts is generated, the interrupt_stack_frame is saved and by the interrupts
@@ -494,14 +490,10 @@ static void schedule_not_in_interrupt(struct thread *cur, struct thread *next) {
    After this function and its caller returns, the thread switch is complete.
  */
 void thread_schedule_tail(struct thread *prev, struct thread *next) {
-  ASSERT (interrupts_get_level () == INTERRUPTS_OFF);
+    ASSERT(interrupts_get_level() == INTERRUPTS_OFF);
 
-  //printf("\nSchedule tail");
-  //printf("\nPrev: %s, TID: %d", prev->name, prev->tid);
-  //printf("\nNext: %s, TID: %d", next->name, next->tid);
-
-  /* Start new time slice. */
-  thread_ticks = 0;
+    /* Start new time slice. */
+    thread_ticks = 0;
 
   /* Mark us as running. */
   set_status(next, THREAD_RUNNING);

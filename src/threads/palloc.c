@@ -40,7 +40,6 @@ static bool page_from_pool (const struct pool *, void *page);
 
 /* Initializes the page allocator.  At most USER_PAGE_LIMIT pages are put into the user pool. */
 void palloc_init (size_t user_page_limit) {
-  printf("\nInitializing palloc.....");
 
   /* Free memory starts at PHYS_START_FREE_MEMORY and runs till PHYS_END_FREE_MEMORY. */
   uint8_t *free_start = (uint8_t *) PHYS_START_FREE_MEMORY;
