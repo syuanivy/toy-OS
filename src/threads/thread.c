@@ -115,7 +115,7 @@ void thread_init(void) {
     /* Set up a thread structure for the running thread. */
     initial_thread = get_first_thread();
     init_thread(initial_thread, "main", PRI_DEFAULT);
-    initial_thread->status = THREAD_RUNNING;
+    set_status(initial_thread, THREAD_RUNNING);
     initial_thread->tid = allocate_tid();
 }
 
@@ -127,7 +127,10 @@ static void init_thread(struct thread *t, const char *name, int priority) {
     ASSERT(name != NULL);
 
     memset(t, 0, sizeof *t);
-    t->status = THREAD_BLOCKED;
+    initial_thread->total_runtime = 0;
+    initial_thread->start_time = timer_get_timestamp();
+    initial_thread->time_at_status = initial_thread->start_time;
+    set_status(t, THREAD_BLOCKED);
 
     strlcpy(t->name, name, sizeof t->name);
     /* Sets the stack. It's a full descending stack.*/
@@ -285,7 +288,10 @@ tid_t thread_create(const char *name, int32_t priority,
     // Setting the tid number.
     tid = thread->tid = allocate_tid();
 
-    thread->status = THREAD_BLOCKED;
+    thread->total_runtime = 0;
+    thread->start_time = timer_get_timestamp();
+    thread->time_at_status = thread->start_time;
+    set_status(thread, THREAD_BLOCKED);
     strlcpy(thread->name, name, sizeof thread->name);
     thread->priority = priority;
     thread->magic = THREAD_MAGIC;
@@ -328,7 +334,8 @@ tid_t thread_create(const char *name, int32_t priority,
 void thread_block(void) {
     ASSERT(!interrupts_context());
     ASSERT(interrupts_get_level() == INTERRUPTS_OFF);
-    thread_current()->status = THREAD_BLOCKED;
+
+    set_status(thread_current(), THREAD_BLOCKED);
     schedule();
 }
 
@@ -348,7 +355,7 @@ void thread_unblock(struct thread *t) {
     old_level = interrupts_disable();
     ASSERT(t->status == THREAD_BLOCKED);
     list_push_back(&ready_list, &t->elem);
-    t->status = THREAD_READY;
+    set_status(t, THREAD_READY);
     interrupts_set_level(old_level);
 }
 
@@ -394,7 +401,7 @@ void thread_exit(void) {
      * actually kill the target thread. */
     thread_unblock_waiting_threads(thread_current());
     list_remove(&thread_current()->allelem);
-    thread_current()->status = THREAD_DYING;
+    set_status(thread_current(), THREAD_DYING);
     schedule();
     NOT_REACHED();
 }
@@ -403,7 +410,7 @@ static void thread_unblock_waiting_threads(struct thread *t) {
     // iterate through all list elements, and unblock threads according
     // to insertion order.
     struct list_elem *elem = list_begin(&(t->waiting_list));
-    if (elem == NULL) return; // we need to return here for empty list...
+    if (elem == NULL) return;// we need to return here for empty list...
     for (; elem != list_end(&(t->waiting_list)); elem = list_next(elem)) {
         struct thread *waiting_thread = list_entry(elem, struct thread, wait_elem);
         thread_unblock(waiting_thread);
@@ -423,19 +430,19 @@ void thread_yield() {
     if (cur != idle_thread) {
         list_push_back(&ready_list, &cur->elem);
     }
-    cur->status = THREAD_READY;
+    set_status(cur, THREAD_READY);
     schedule();
     interrupts_set_level(old_level);
 }
 
 static void schedule() {
-    /* Scheduling the next thread to run. */
-    struct thread *cur = thread_get_running_thread();
-    struct thread *next = thread_get_next_thread_to_run();
+  /* Scheduling the next thread to run. */
+  struct thread *cur = thread_get_running_thread();
+  struct thread *next = thread_get_next_thread_to_run();
 
-    ASSERT(interrupts_get_level() == INTERRUPTS_OFF);
-    ASSERT(cur->status != THREAD_RUNNING);
-    ASSERT(is_thread(next));
+  ASSERT (interrupts_get_level () == INTERRUPTS_OFF);
+  ASSERT (cur->status != THREAD_RUNNING);
+  ASSERT (is_thread (next));
 
     if (interrupts_was_irq_generated()) {
         schedule_in_interrupt(cur, next);
@@ -451,6 +458,7 @@ static void schedule_in_interrupt(struct thread *cur, struct thread *next) {
     ASSERT(is_thread(cur));
     ASSERT(is_thread(next));
     ASSERT(interrupts_was_irq_generated());
+
     /* Save the current stack frame of the current thread. */
     thread_save_stack_frame(cur, get_current_interrupts_stack_frame());
 
@@ -487,22 +495,22 @@ void thread_schedule_tail(struct thread *prev, struct thread *next) {
     /* Start new time slice. */
     thread_ticks = 0;
 
-    /* Mark us as running. */
-    next->status = THREAD_RUNNING;
+  /* Mark us as running. */
+  set_status(next, THREAD_RUNNING);
 
-    /* If the thread we switched from is dying, destroy its struct
-       thread.  This must happen late so that thread_exit() doesn't
-       pull out the rug under itself.  (We don't free
-       initial_thread because its memory was not obtained via
-       palloc().) */
-    if (prev->status == THREAD_DYING && prev != initial_thread) {
-        ASSERT(prev != next)
-        printf("\nReleasing resources of : %s, TID: %d", prev->name, prev->tid);
+  /* If the thread we switched from is dying, destroy its struct
+     thread.  This must happen late so that thread_exit() doesn't
+     pull out the rug under itself.  (We don't free
+     initial_thread because its memory was not obtained via
+     palloc().) */
+  if (prev->status == THREAD_DYING && prev != initial_thread) {
+       ASSERT (prev != next)
+       printf("\nReleasing resources of : %s, TID: %d", prev->name, prev->tid);
 
-        /* Releasing the memory that was assigned to this thread. */
-        palloc_free_page(prev);
-        timer_msleep(1000000);
-    }
+       /* Releasing the memory that was assigned to this thread. */
+       palloc_free_page(prev);
+       timer_msleep(1000000);
+   }
 }
 
 /* Invoke function 'func' on all threads, passing along 'aux'.
@@ -568,10 +576,10 @@ static void idle(void *idle_started_ UNUSED) {
 
     unsigned short green = 0x7E0;
 
-    for (;;) {
-        //SetForeColour(green);
-        //printf("\nIdle thread....");
-        timer_msleep(1000000);
+  for(;;) {
+      //SetForeColour(green);
+      //printf("\nIdle thread....");
+      timer_msleep(1000000);
 
         /* Let someone else run. */
         interrupts_disable();
@@ -683,4 +691,22 @@ static void set_current_interrupts_stack_frame(struct interrupts_stack_frame *st
 static struct interrupts_stack_frame *get_current_interrupts_stack_frame() {
     ASSERT(current_stack_frame != NULL)
     return current_stack_frame;
+}
+
+void set_status(struct thread *t, enum thread_status new_status) {
+    
+    enum thread_status old_status = t->status;
+    uint32_t time_at_status = t->time_at_status;
+    
+    if (old_status != new_status) {
+    
+        //Set new status
+        t->status = new_status;
+        t->time_at_status = timer_get_timestamp();
+        
+        //Add to the total runtime if the thread is coming out of the running state
+        if (old_status == THREAD_RUNNING) {
+            t->total_runtime += time_at_status;
+        }
+    }
 }
