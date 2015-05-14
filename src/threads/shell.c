@@ -9,6 +9,7 @@
  #include <string.h>
  #include "thread.h"
  #include "interrupt.h"
+ #include "shell.h"
  
  static char* get_thread_status(enum thread_status status) {
      
@@ -59,13 +60,45 @@ static void print_threads_status() {
     interrupts_enable();
 }
 
+static void test(void *param UNUSED) {
+    int i;
+    for (i = 0; i < 3; i++) {
+        printf("\ntest %i", i);
+        timer_msleep(50000);   
+    }
+}
+
+static void run_command(char *command, bool block) {
+    
+    thread_func *func;
+    void *param;
+    int32_t priority = PRI_MAX;
+    
+    if (strcmp(command, "test") == 0) {
+        func = &test;
+    }
+    else {
+        printf("\nAvailable commands:");
+        printf("\ntest - for debugging only");
+        
+        return;
+    }
+    
+    if (block) {
+        func(param);
+    }
+    else {
+        thread_create(command, priority, func, param);
+    }
+}
+
 void run_shell() {
     printf("\nStarting the osOS shell...\n");
 
-    char input[100];
+    char input[INPUTSIZE];
     while (true) {
 
-        memset(input, 0, 100);
+        memset(input, 0, INPUTSIZE);
         int index = 0;
 
         uart_puts("\nosO$ "); 
@@ -89,11 +122,19 @@ void run_shell() {
     else if (strcmp(input, "ts") == 0) {
         print_threads_status();
     }
-    else if (memcmp(input, "run ", 4) == 0) {
-        printf("\nTODO - run command");
+    else if (memcmp(input, "run ", RUNSIZE) == 0) {
+        uint32_t command_size = INPUTSIZE - RUNSIZE;
+        char command[command_size];
+        strlcpy(command, &input[RUNSIZE], command_size);
+        
+        run_command(command, true);
     }
-    else if (memcmp(input, "bg ", 3) == 0) {
-        printf("\nTODO - bg command");
+    else if (memcmp(input, "bg ", BGSIZE) == 0) {
+        uint32_t command_size = INPUTSIZE - BGSIZE;
+        char command[command_size];
+        strlcpy(command, &input[BGSIZE], command_size);
+        
+        run_command(command, false);
     }
     else if (strcmp(input, "shutdown") == 0) {
         break;
