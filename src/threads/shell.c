@@ -66,6 +66,8 @@ static void test(void *param UNUSED) {
         printf("\ntest %i", i);
         timer_msleep(50000);   
     }
+    
+    printf("\ntest done\n");
 }
 
 static void run_command(char *command, bool block) {
