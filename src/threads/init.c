@@ -74,8 +74,6 @@ void init() {
     timer_init();
     printf("\n[Kernel Initialization Finished]\n");
 
-    timer_msleep(3000000);
-
     /* Starts preemptive thread scheduling by enabling interrupts. */
     thread_start();
 
