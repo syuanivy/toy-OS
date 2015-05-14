@@ -80,28 +80,19 @@ void run_shell() {
 
         input[index] = '\0';
 
-    if (!strcmp(input, "help")) {
+    if (strcmp(input, "help") == 0) {
         printf("\nts - thread status - show running threads and their run times");
         printf("\nrun <func> - launch a thread function and wait for its completion");
         printf("\nbg <func> - launch a command in the background");
         printf("\nshutdown - shutdown the operating system");
     }
-    else if (!strcmp(input, "ts")) {
+    else if (strcmp(input, "ts") == 0) {
         print_threads_status();
     }
-    else if (
-        input[0] == 'r'
-        && input[1] == 'u'
-        && input[2] == 'n'
-        && input[3] == ' '
-    ) {
+    else if (memcmp(input, "run ", 4) == 0) {
         printf("\nTODO - run command");
     }
-    else if (
-        input[0] == 'b'
-        && input[1] == 'g'
-        && input[2] == ' '
-    ) {
+    else if (memcmp(input, "bg ", 3) == 0) {
         printf("\nTODO - bg command");
     }
     else if (strcmp(input, "shutdown") == 0) {
