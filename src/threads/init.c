@@ -36,6 +36,7 @@ static void init_nonbusy_test();
 static void task_busy_sleeper(void *);
 static void task_nonbusy_sleeper(void *);
 static void task_runner(void *);
+static void task_always(void *);
 static struct lock lock_task_busy;
 static struct lock lock_task_nonbusy;
 
@@ -84,9 +85,10 @@ void init() {
     /* Starts preemptive thread scheduling by enabling interrupts. */
     thread_start();
 
-    init_nonbusy_test();
 
-  //  run_shell();
+    init_busy_test(1000000);
+
+    run_shell();
 
     thread_exit();
 }
@@ -119,43 +121,49 @@ static void task_3(void *param UNUSED) {
 }
 
 
-static void init_busy_test() {
+static void init_busy_test(int delay) {
     lock_init(&lock_task_busy);
-printf("\nentering init_busy_test, after lock_init");
 
-    thread_create("busy sleeper", PRI_MAX, &task_busy_sleeper, NULL);
-  //  thread_create("non busy sleeper", PRI_MAX, &task_nonbusy_sleeper, NULL);
+    thread_create("busy sleeper", PRI_MAX, &task_busy_sleeper, delay);
     thread_create("awake runner", PRI_MAX, &task_runner, NULL);
 }
 
-static void init_nonbusy_test() {
+static void init_nonbusy_test(int delay) {
     lock_init(&lock_task_nonbusy);
-  //  thread_create("busy sleeper", PRI_MAX, &task_busy_sleeper, NULL);
-    thread_create("non busy sleeper", PRI_MAX, &task_nonbusy_sleeper, NULL);
+
+    thread_create("non busy sleeper", PRI_MAX, &task_nonbusy_sleeper, delay);
     thread_create("awake runner", PRI_MAX, &task_runner, NULL);
 }
 
 static void task_busy_sleeper(void *param UNUSED) {
-  printf("\nI'm the busy sleeper and I will fall asleep for 2 seconds\n");
-  timer_msleep(2000000);
-  printf("\nI'm the busy sleeper and now I wake up\n");
+  int delay = param;
+  printf("\nI'm the busy sleeper and I will fall asleep for  %d microseconds\n", delay);
+  timer_msleep(delay);
+  printf("\nI'm the busy sleeper and now I wake up after %d microseconds\n", delay);
 }
 
 static void task_nonbusy_sleeper(void *param UNUSED) {
-  printf("\nI'm the non busy sleeper and I will fall asleep for 2 seconds\n");
-  timer_msleep_nonbusy(2000000);
-  printf("\nI'm the non busy sleeper and now I wake up\n");
+  int delay = param;
+  printf("\nI'm the non busy sleeper and I will fall asleep for %d microseconds\n", delay);
+  timer_msleep_nonbusy(delay);
+  printf("\nI'm the non busy sleeper and now I wake up after %d microseconds\n", delay);
 }
 
 static void task_runner(void *param UNUSED) {
-  printf("\nI'm the awake runner and I start working at %d microseconds!\n", timer_get_timestamp());
+  int start = timer_get_timestamp();
+  printf("\nI'm the awake runner and I start working at %d microseconds!\n", start);
   int i = 0;
-  while(i < 100){
+
+  while(i < 1000){
     i++;
-    printf("%d  ",i);
+    printf("%d ",i);
   }
+  int end = timer_get_timestamp();
   printf("\nAwake runner has done its job at %d!\n", timer_get_timestamp());
+  printf("\nTotal cost : %d microseconds!\n", end-start);
 }
+
+
 
 
 
