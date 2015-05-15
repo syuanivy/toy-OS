@@ -12,7 +12,7 @@
 #include "../threads/interrupt.h"
 #include "../threads/thread.h"
 
-#define TIMER_PERIODIC_INTERVAL 500000 // Time in miliseconds
+#define TIMER_PERIODIC_INTERVAL 500 // Time in miliseconds
 
 struct bcm2835_system_timer_registers {
   volatile unsigned int CS;  /** System Timer Control/Status */
@@ -41,7 +41,6 @@ static void timer_reset_timer_compare(int timer_compare);
 static void timer_set_interval(int timer_compare, int milliseconds);
 
 void timer_init() {
-  printf("\nInitializing timer.....");
   interrupts_register_irq(IRQ_1, timer_irq_handler, "Timer Interrupt");
   list_init(&sleep_list);
   timer_set_interval(IRQ_1, TIMER_PERIODIC_INTERVAL);
@@ -114,7 +113,8 @@ static void timer_irq_handler(struct interrupts_stack_frame *stack_frame) {
 
   timer_wakeup();
 
-  thread_tick(stack_frame);
+  //timer_msleep(1000000);
+//  timer_msleep(300000);
 
   // The System Timer compare register has to be set up with the new time after the timer interrupt.
   timer_set_interval(IRQ_1, TIMER_PERIODIC_INTERVAL);

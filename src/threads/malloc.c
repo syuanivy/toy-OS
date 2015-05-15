@@ -71,8 +71,6 @@ static struct block *arena_to_block (struct arena *, size_t idx);
 
 /* Initializes the malloc() descriptors. */
 void malloc_init (void)  {
-  printf("\nInitializing malloc.....");
-
   desc_cnt = 0;
   size_t block_size;
   for (block_size = 16; block_size < PGSIZE / 2; block_size *= 2)

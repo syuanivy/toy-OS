@@ -5,4 +5,8 @@
  *      Author: rreeves
  */
  
+ #define INPUTSIZE 100
+ #define RUNSIZE 4 //"run "
+ #define BGSIZE 3 //"bg "
+ 
  void run_shell();

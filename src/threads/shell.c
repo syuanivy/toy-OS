@@ -9,8 +9,9 @@
  #include <string.h>
  #include "thread.h"
  #include "interrupt.h"
+ #include "shell.h"
  
- static char* getThreadStatusText(enum thread_status status) {
+ static char* get_thread_status(enum thread_status status) {
      
     switch (status) {
         case THREAD_RUNNING:
@@ -24,31 +25,82 @@
     }
  }
  
+ static uint32_t get_total_runtime(struct thread *t, uint32_t time) {
+     if (t->status == THREAD_RUNNING) {
+         return (t->total_runtime + time - t->time_at_status) / 1000;
+     }
+     else {
+         return t->total_runtime / 1000;
+     }
+ }
+ 
+ static uint32_t get_total_alivetime(struct thread *t, uint32_t time) {
+     return (time - t->start_time) / 1000;
+ }
+ 
  static void print_thread_status(struct thread *t, void *param UNUSED) {
-   
-    printf("\n%d, %s, %s", 
+     
+    uint32_t time = timer_get_timestamp();
+     
+    printf("\n%d, %s, %s, %u, %u", 
         t->tid, 
         strlen(t->name) > 0 ? t->name : "[No Name]",
-        getThreadStatusText(t->status)
+        get_thread_status(t->status),
+        get_total_runtime(t, time),
+        get_total_alivetime(t, time)
     );
 }
 
 static void print_threads_status() {
     interrupts_disable();
 
-    printf("\nThread ID, Name, Status");
+    printf("\nThread ID, Name, Status, Total run time (ms), Total alive time (ms)");
     thread_foreach(&print_thread_status, NULL);
 
     interrupts_enable();
 }
 
+static void test(void *param UNUSED) {
+    int i;
+    for (i = 0; i < 3; i++) {
+        printf("\ntest %i", i);
+        timer_msleep(50000);   
+    }
+    
+    printf("\ntest done\n");
+}
+
+static void run_command(char *command, bool block) {
+    
+    thread_func *func;
+    void *param;
+    int32_t priority = PRI_MAX;
+    
+    if (strcmp(command, "test") == 0) {
+        func = &test;
+    }
+    else {
+        printf("\nAvailable commands:");
+        printf("\ntest - for debugging only");
+        
+        return;
+    }
+    
+    if (block) {
+        func(param);
+    }
+    else {
+        thread_create(command, priority, func, param);
+    }
+}
+
 void run_shell() {
     printf("\nStarting the osOS shell...\n");
 
-    char input[100];
+    char input[INPUTSIZE];
     while (true) {
 
-        memset(input, 0, 100);
+        memset(input, 0, INPUTSIZE);
         int index = 0;
 
         uart_puts("\nosO$ "); 
@@ -63,29 +115,28 @@ void run_shell() {
 
         input[index] = '\0';
 
-    if (!strcmp(input, "help")) {
+    if (strcmp(input, "help") == 0) {
         printf("\nts - thread status - show running threads and their run times");
         printf("\nrun <func> - launch a thread function and wait for its completion");
         printf("\nbg <func> - launch a command in the background");
         printf("\nshutdown - shutdown the operating system");
     }
-    else if (!strcmp(input, "ts")) {
+    else if (strcmp(input, "ts") == 0) {
         print_threads_status();
     }
-    else if (
-        input[0] == 'r'
-        && input[1] == 'u'
-        && input[2] == 'n'
-        && input[3] == ' '
-    ) {
-        printf("\nTODO - run command");
+    else if (memcmp(input, "run ", RUNSIZE) == 0) {
+        uint32_t command_size = INPUTSIZE - RUNSIZE;
+        char command[command_size];
+        strlcpy(command, &input[RUNSIZE], command_size);
+        
+        run_command(command, true);
     }
-    else if (
-        input[0] == 'b'
-        && input[1] == 'g'
-        && input[2] == ' '
-    ) {
-        printf("\nTODO - bg command");
+    else if (memcmp(input, "bg ", BGSIZE) == 0) {
+        uint32_t command_size = INPUTSIZE - BGSIZE;
+        char command[command_size];
+        strlcpy(command, &input[BGSIZE], command_size);
+        
+        run_command(command, false);
     }
     else if (strcmp(input, "shutdown") == 0) {
         break;
