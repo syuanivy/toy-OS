@@ -71,9 +71,13 @@ void run_command(char *command, bool block) {
     if (strcmp(command, "test") == 0) {
         func = &test;
     }
+    else if (strcmp(command, "priority") == 0) {
+        func = &priority;
+    }
     else {
         printf("\nAvailable commands:");
         printf("\ntest - for debugging only");
+        printf("\npriority - demonstrates thread prioritization");
         
         return;
     }

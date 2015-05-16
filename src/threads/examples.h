@@ -6,3 +6,4 @@
  */
  
  void test(void *params);
+ void priority(void *params);
