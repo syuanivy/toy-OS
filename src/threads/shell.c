@@ -10,6 +10,7 @@
  #include "thread.h"
  #include "interrupt.h"
  #include "shell.h"
+ #include "examples.h"
  
  static char* get_thread_status(enum thread_status status) {
      
@@ -60,17 +61,7 @@ static void print_threads_status() {
     interrupts_enable();
 }
 
-static void test(void *param UNUSED) {
-    int i;
-    for (i = 0; i < 3; i++) {
-        printf("\ntest %i", i);
-        timer_msleep(50000);   
-    }
-    
-    printf("\ntest done\n");
-}
-
-static void run_command(char *command, bool block) {
+void run_command(char *command, bool block) {
     
     thread_func *func;
     void *param;
