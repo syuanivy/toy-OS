@@ -43,19 +43,20 @@
      
     uint32_t time = timer_get_timestamp();
      
-    printf("\n%d, %s, %s, %u, %u", 
+    printf("\n%d, %s, %s, %u, %u, %u", 
         t->tid, 
         strlen(t->name) > 0 ? t->name : "[No Name]",
         get_thread_status(t->status),
         get_total_runtime(t, time),
-        get_total_alivetime(t, time)
+        get_total_alivetime(t, time),
+        t->priority
     );
 }
 
 static void print_threads_status() {
     interrupts_disable();
 
-    printf("\nThread ID, Name, Status, Total run time (ms), Total alive time (ms)");
+    printf("\nThread ID, Name, Status, Total run time (ms), Total alive time (ms), Priority");
     thread_foreach(&print_thread_status, NULL);
 
     interrupts_enable();
