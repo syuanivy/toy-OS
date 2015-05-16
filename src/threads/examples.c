@@ -26,7 +26,7 @@ static void loop(void *params) {
 	}
 }
 
-void priority(void *params) {
+void priority_ex(void *params) {
 	
 	printf("\nPriority start");
 	

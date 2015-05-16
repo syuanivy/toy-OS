@@ -72,7 +72,7 @@ void run_command(char *command, bool block) {
         func = &test;
     }
     else if (strcmp(command, "priority") == 0) {
-        func = &priority;
+        func = &priority_ex;
     }
     else {
         printf("\nAvailable commands:");
