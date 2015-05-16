@@ -40,7 +40,7 @@ extern void save_and_switch_context(struct interrupts_stack_frame *cur_stack_fra
 
 /* List of processes in THREAD_READY state, that is, processes
    that are ready to run but not actually running. */
-static struct list ready_list;
+//static struct list ready_list;
 
 static struct list ready_lists[PRI_MAX + 1];
 
@@ -673,7 +673,7 @@ static struct thread* thread_get_next_thread_to_run(void) {
         }
     }
     
-    printf("\nchoosing next thread %s", next_thread->name);
+    //printf("\nchoosing next thread %s", next_thread->name);
     
     return next_thread;
 }
