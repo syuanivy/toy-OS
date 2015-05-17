@@ -93,7 +93,7 @@ static void init_all_threads() {
     //    tmp_tid = thread_create("Super Duper", PRI_MAX, &task_1, NULL);
     //    thread_create("Burger King", PRI_MAX, &task_2, &tmp_tid);
     //    thread_create("In and Out", PRI_MAX, &task_3, &tmp_tid);
-    thread_create("Task Shell", PRI_MAX, &task_shell, NULL);
+    thread_create("Task Shell", PRI_DEFAULT, &task_shell, NULL);
 }
 
 static void task_1(void *param UNUSED) {

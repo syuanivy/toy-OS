@@ -415,7 +415,7 @@ void thread_exit(void) {
        and schedule another process.  That process will destroy us
        when it calls thread_schedule_tail(). */
     interrupts_disable();
-    printf("\nDying slowly ---------------------------------- %s", thread_current()->name);
+    printf("\n%s thread exiting", thread_current()->name);
     /* first we unblock all waiting threads, we need to do this before we 
      * actually kill the target thread. */
     thread_unblock_waiting_threads(thread_current());

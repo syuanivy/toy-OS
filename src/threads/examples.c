@@ -5,6 +5,8 @@
  *      Author: rreeves
  */
  
+ #include "thread.h"
+ 
 void test(void *params) {
 	
 	printf("\nTest start");
@@ -30,7 +32,8 @@ void priority_ex(void *params) {
 	
 	printf("\nPriority start");
 	
-	thread_create("Low Priority", 10, &loop, "Low");
+	thread_create("Low Priority", PRI_DEFAULT - 1, &loop, "Low");
+	thread_create("High Priority", PRI_DEFAULT + 1, &loop, "High");
 	
 	printf("\nPriority end\n");
 }
