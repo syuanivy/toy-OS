@@ -353,7 +353,7 @@ void thread_unblock(struct thread *t) {
 
     old_level = interrupts_disable();
     ASSERT(t->status == THREAD_BLOCKED);
-    list_push_back(&ready_list, &t->elem);
+    list_push_back(&ready_lists[t->priority], &t->elem);  
     set_status(t, THREAD_READY);
     interrupts_set_level(old_level);
 }
@@ -727,5 +727,8 @@ int thread_num_threads(void) {
 }
 
 int thread_num_ready_threads(void) {
-    return list_size(&ready_list);
+    int total_threads = 0;
+    
+    return total_threads;
+    //return list_size(&ready_list);
 }
