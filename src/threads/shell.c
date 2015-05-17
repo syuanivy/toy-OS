@@ -52,12 +52,10 @@ static void print_thread_status(struct thread *t, void *param UNUSED) {
 }
 
 static void print_threads_status() {
-    interrupts_disable();
-
+    enum interrupts_level old_level = interrupts_disable();
     printf("\nThread ID, Name, Status, Total run time (ms), Total alive time (ms)");
     thread_foreach(&print_thread_status, NULL);
-
-    interrupts_enable();
+    interrupts_set_level(old_level);
 }
 
 static void test(void *param UNUSED) {
