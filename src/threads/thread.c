@@ -114,7 +114,7 @@ void thread_init(void) {
 
     /* Set up a thread structure for the running thread. */
     initial_thread = get_first_thread();
-    init_thread(initial_thread, "main", PRI_DEFAULT);
+    init_thread(initial_thread, "kinit", PRI_DEFAULT);
     set_status(initial_thread, THREAD_RUNNING);
     initial_thread->tid = allocate_tid();
 }
@@ -171,7 +171,7 @@ void thread_start() {
     /* Creating the idle thread. */
     struct semaphore idle_started;
     sema_init(&idle_started, 0);
-    thread_create("Idle Thread", PRI_MAX, &idle, &idle_started);
+    thread_create("kidle", PRI_MAX, &idle, &idle_started);
 
     // Only Enables the IRQ interruptions, FIQ interruptions remain disable.
     interrupts_enable();
@@ -706,4 +706,12 @@ void set_status(struct thread *t, enum thread_status new_status) {
             t->total_runtime += time - time_at_status;
         }
     }
+}
+
+int thread_num_threads(void) {
+    return list_size(&all_list);
+}
+
+int thread_num_ready_threads(void) {
+    return list_size(&ready_list);
 }

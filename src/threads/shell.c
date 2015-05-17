@@ -29,6 +29,8 @@ static char* get_thread_status(enum thread_status status) {
             return "Blocked";
         case THREAD_DYING:
             return "Dying";
+        default:
+            return "Undefined";
     }
 }
 
@@ -47,8 +49,7 @@ static uint32_t get_total_alivetime(struct thread *t, uint32_t time) {
 static void print_thread_status(struct thread *t, void *param UNUSED) {
 
     uint32_t time = timer_get_timestamp();
-
-    printf("\n%d, %s, %s, %u, %u",
+    printf("\n%-15d\t%-15s\t%-15s\t%-15u\t%-15u",
             t->tid,
             strlen(t->name) > 0 ? t->name : "[No Name]",
             get_thread_status(t->status),
@@ -59,11 +60,16 @@ static void print_thread_status(struct thread *t, void *param UNUSED) {
 
 static void print_threads_status() {
     enum interrupts_level old_level = interrupts_disable();
-    printf("\nThread ID, Name, Status, Total run time (ms), Total alive time (ms)");
+    printf("\n-----------------------------------------------------"
+            "----------------------");
+    printf("\nTotal Thread(s): %u", thread_num_threads());
+    printf("\nTotal Ready Thread(s): %u", thread_num_ready_threads());
+    printf("\n-----------------------------------------------------"
+            "----------------------");
+    printf("\n%-15s\t%-15s\t%-15s\t%-15s\t%-15s",
+            "TID", "NAME", "STATUS", "RTIME(ms)", "ATIME(ms)");
     thread_foreach(&print_thread_status, NULL);
-    interrupts_enable();
-    
-//    interrupts_set_level(old_level);
+    interrupts_set_level(old_level);
 }
 
 static void test(void *param UNUSED) {

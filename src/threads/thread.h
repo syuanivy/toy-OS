@@ -148,6 +148,8 @@ int thread_get_nice (void);
 void thread_set_nice (int);
 int thread_get_recent_cpu (void);
 int thread_get_load_avg (void);
+int thread_num_threads(void);
+int thread_num_ready_threads(void);
 
 void set_status(struct thread *t, enum thread_status new_status);
 
