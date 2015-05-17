@@ -68,7 +68,7 @@ void run_command(char *command, bool block) {
     
     thread_func *func;
     void *param;
-    int32_t priority = PRI_MAX;
+    int32_t priority = PRI_DEFAULT;
     
     if (strcmp(command, "test") == 0) {
         func = &test;

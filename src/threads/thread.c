@@ -38,10 +38,6 @@ extern void save_and_switch_context(struct interrupts_stack_frame *cur_stack_fra
    of thread.h for details. */
 #define THREAD_MAGIC 0xcd6abf4b
 
-/* List of processes in THREAD_READY state, that is, processes
-   that are ready to run but not actually running. */
-//static struct list ready_list;
-
 static struct list ready_lists[PRI_MAX + 1];
 
 /* List of all processes.  Processes are added to this list
@@ -111,17 +107,12 @@ void thread_init(void) {
     user_ticks = 0;
 
     lock_init(&tid_lock);
-    //list_init(&ready_list);
     list_init(&all_list);
-    
-    //printf("\n ready list init start");
     
     int i;
     for (i = 0; i <= PRI_MAX; i++) {
         list_init(&ready_lists[i]);
     }
-    
-    //printf("\n ready list init end");
 
     /* Set up a thread structure for the running thread. */
     initial_thread = get_first_thread();
@@ -366,14 +357,7 @@ void thread_unblock(struct thread *t) {
     old_level = interrupts_disable();
     ASSERT(t->status == THREAD_BLOCKED);
     
-    //list_push_back(&ready_list, &t->elem);
-    
-    //printf("\nthread '%s' unblock start", t->name);
-    
-    list_push_back(&ready_lists[t->priority], &t->elem);
-    
-    //printf("\nthread '%s' unblock end", t->name);
-    
+    list_push_back(&ready_lists[t->priority], &t->elem);    
     set_status(t, THREAD_READY);
     interrupts_set_level(old_level);
 }
@@ -447,14 +431,9 @@ void thread_yield() {
 
     old_level = interrupts_disable();
     if (cur != idle_thread) {
-        //list_push_back(&ready_list, &cur->elem);
-        
-        //printf("\nthread '%s' thread yield start", cur->name);
-        
         list_push_back(&ready_lists[cur->priority], &cur->elem);
-        
-        //printf("\nthread '%s' thread yield end", cur->name);
     }
+    
     set_status(cur, THREAD_READY);
     schedule();
     interrupts_set_level(old_level);
@@ -650,30 +629,18 @@ static bool is_thread(struct thread *t) {
  * the run queue.) If the run queue is empty, return idle_thred.
  */
 static struct thread* thread_get_next_thread_to_run(void) {
-//    if (list_empty(&ready_list)) {
-//        return idle_thread;
-//    } else {
-//        return list_entry(list_pop_front(&ready_list), struct thread, elem);
-//    }
 
-    //printf("\nnext thread start");
-    
     struct thread *next_thread = idle_thread;
     
     int i;
     for (i = PRI_MAX; i >= 0; i--) {
         struct list *thread_list = &ready_lists[i];
         
-        //printf("\n checking for threads at priority %i", i);
-        
         if (!list_empty(thread_list)) {
-            //printf("\nfound a thread");
             next_thread = list_entry(list_pop_front(thread_list), struct thread, elem);
             break;
         }
     }
-    
-    //printf("\nchoosing next thread %s", next_thread->name);
     
     return next_thread;
 }
