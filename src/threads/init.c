@@ -76,11 +76,13 @@ void init() {
     init_shell();
 
     while (true) {
+        // never let idle thread run
+        timer_msleep(1);
     }
 
     thread_exit();
 }
 
 static void init_shell() {
-    thread_create("Task Shell", PRI_MAX, &task_shell, NULL);
+    thread_create("kshell", PRI_MAX, &task_shell, NULL);
 }
