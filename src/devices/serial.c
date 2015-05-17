@@ -14,9 +14,6 @@
 volatile static unsigned int input_head;
 volatile static unsigned int input_tail;
 volatile static unsigned char input_buffer[RXBUFMASK + 1];
-volatile static unsigned int output_head;
-volatile static unsigned int output_tail;
-volatile static unsigned char output_buffer[RXBUFMASK + 1];
 
 static struct thread *uart_blocking_thread = NULL;
 
@@ -128,15 +125,6 @@ static void uart_irq_handler(struct interrupts_stack_frame *stack_frame) {
             thread_unblock(uart_blocking_thread);
         }
     }
-    else if ((masked_irq_status & (1 << 5)) == 0x20) {
-        // TODO: do we need to check FIFO here?
-        // consume one character in the output buffer
-        if (output_head != output_tail) {
-            int c = output_buffer[output_tail];
-            output_tail = (output_tail + 1) & 0xFF;
-            mmio_write(UART0_DR, c);
-        }
-    }
     return;
 }
 
@@ -175,7 +163,7 @@ void uart_init() {
     // Mask RXIM, TXIM, RTIM, this determines which interrupt
     // is enabled. (Even if we don't enable it, we still can get it in
     // the RIS register.)
-    mmio_write(UART0_IMSC, (1 << 4) | (1 << 5) | (1 << 6));
+    mmio_write(UART0_IMSC, (1 << 4) | (1 << 6));
 
     // FIFO receive interrupt trigger level (1/8))
     //    mmio_write(UART0_IFLS, UART0_IFLS & 0xffffff37);
@@ -197,8 +185,6 @@ void uart_init() {
  * here.
  */
 void uart_putc_helper(unsigned char byte) {
-//    output_head = (output_head + 1) & RXBUFMASK;
-//    output_buffer[output_head] = byte;
     while ( mmio_read(UART0_FR) & (1 << 5) ) { }
     mmio_write(UART0_DR, byte);
 }
