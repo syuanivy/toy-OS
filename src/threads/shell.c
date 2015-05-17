@@ -56,11 +56,11 @@
 
 static void print_threads_status() {
     enum interrupts_level old_level = interrupts_disable();
-    printf("\nThread ID, Name, Status, Total run time (ms), Total alive time (ms)");
+    
+    printf("\nThread ID, Name, Status, Total run time (ms), Total alive time (ms), Priority");
     thread_foreach(&print_thread_status, NULL);
+    
     interrupts_set_level(old_level);
-}
-
     interrupts_enable();
 }
 
