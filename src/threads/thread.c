@@ -202,9 +202,7 @@ void thread_wait(tid_t tid) {
         struct thread *running_thread = thread_get_running_thread();
         list_push_back(&(target_thread->waiting_list), &(running_thread->wait_elem));
         // the current thread block until noticed by the target thread. 
-        printf(">>>>>>>>>>>>>>>>>>> yeah! I'm %s and I start waiting!! <<<<<<<<<<<<<<<<<<<<\n", running_thread->name);
         thread_block();
-        printf(">>>>>>>>>>>>>>>>>>> yeah! I'm %s and I'm unblocked!! <<<<<<<<<<<<<<<<<<<<\n", running_thread->name);
     }
     interrupts_set_level(old_level);
 }
@@ -217,7 +215,6 @@ static struct thread *thread_find(tid_t tid) {
     for (; e != list_end(&all_list); e = list_next(e)) {
         struct thread *target = list_entry(e, struct thread, allelem);
         if (target->tid == tid) {
-            printf("thread %s found\n", target->name);
             t = target;
             break;
         }
@@ -396,7 +393,8 @@ void thread_exit(void) {
        and schedule another process.  That process will destroy us
        when it calls thread_schedule_tail(). */
     interrupts_disable();
-    printf("\nDying slowly ---------------------------------- %s", thread_current()->name);
+    struct thread *t = thread_current();
+    printf("\nI'm %s and I'm DYING!!!\n", t->name);
     /* first we unblock all waiting threads, we need to do this before we 
      * actually kill the target thread. */
     thread_unblock_waiting_threads(thread_current());
@@ -505,8 +503,6 @@ void thread_schedule_tail(struct thread *prev, struct thread *next) {
      palloc().) */
   if (prev->status == THREAD_DYING && prev != initial_thread) {
        ASSERT (prev != next)
-       printf("\nReleasing resources of : %s, TID: %d", prev->name, prev->tid);
-
        /* Releasing the memory that was assigned to this thread. */
        palloc_free_page(prev);
        timer_msleep(1000000);
