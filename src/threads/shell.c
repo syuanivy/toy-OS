@@ -11,6 +11,12 @@
 #include "interrupt.h"
 #include "shell.h"
 #include "serial.h"
+#include "timer.h"
+#include "thread_wait_demo.h"
+
+void task_shell(void *param UNUSED) {
+    run_shell();
+}
 
 static char* get_thread_status(enum thread_status status) {
 
@@ -55,7 +61,9 @@ static void print_threads_status() {
     enum interrupts_level old_level = interrupts_disable();
     printf("\nThread ID, Name, Status, Total run time (ms), Total alive time (ms)");
     thread_foreach(&print_thread_status, NULL);
-    interrupts_set_level(old_level);
+    interrupts_enable();
+    
+//    interrupts_set_level(old_level);
 }
 
 static void test(void *param UNUSED) {
@@ -76,10 +84,12 @@ static void run_command(char *command, bool block) {
 
     if (strcmp(command, "test") == 0) {
         func = &test;
+    } else if (strcmp(command, "thread_wait_demo") == 0) {
+        func = &thread_wait_demo;
     } else {
         printf("\nAvailable commands:");
         printf("\ntest - for debugging only");
-
+        printf("\nthread_wait_demo - for debugging only");
         return;
     }
 
@@ -99,9 +109,8 @@ void run_shell() {
         memset(input, 0, INPUTSIZE);
         int index = 0;
 
-        uart_puts("\nOSOS$ ");
+        uart_puts("\nosOS$ ");
         char inputc = uart_getc();
-
         while (inputc != CR) {
             // TODO: navigation not implemented here...
             if (inputc == BS && index > 0) {
@@ -116,7 +125,6 @@ void run_shell() {
             }
             inputc = uart_getc();
         }
-
         input[index] = '\0';
 
         if (strcmp(input, "help") == 0) {
