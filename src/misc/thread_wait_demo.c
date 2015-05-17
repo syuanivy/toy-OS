@@ -10,9 +10,9 @@ static struct lock step_lock;
 void thread_wait_demo(void *param UNUSED) {
     printf("\n===== Thread Wait Demo Initializing =====\n");
     lock_init(&step_lock);
-    target_tid = thread_create("Target", PRI_MAX, &task_target, NULL);
-    thread_create("Waiter1", PRI_MAX, &task_waiter1, &target_tid);
-    thread_create("Waiter2", PRI_MAX, &task_waiter2, &target_tid);
+    target_tid = thread_create("kdemo_target", PRI_MAX, &task_target, NULL);
+    thread_create("kdemo_waiter1", PRI_MAX, &task_waiter1, &target_tid);
+    thread_create("kdemo_waiter2", PRI_MAX, &task_waiter2, &target_tid);
 }
 
 void task_target(void *param UNUSED) {
