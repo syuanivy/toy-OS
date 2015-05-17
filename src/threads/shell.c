@@ -11,6 +11,7 @@
  #include "interrupt.h"
  #include "shell.h"
  #include "examples.h"
+ #include "serial.h"
  
  static char* get_thread_status(enum thread_status status) {
      
@@ -54,10 +55,11 @@
 }
 
 static void print_threads_status() {
-    interrupts_disable();
-
-    printf("\nThread ID, Name, Status, Total run time (ms), Total alive time (ms), Priority");
+    enum interrupts_level old_level = interrupts_disable();
+    printf("\nThread ID, Name, Status, Total run time (ms), Total alive time (ms)");
     thread_foreach(&print_thread_status, NULL);
+    interrupts_set_level(old_level);
+}
 
     interrupts_enable();
 }
@@ -102,45 +104,48 @@ void run_shell() {
         uart_puts("\nosO$ "); 
         char inputc = uart_getc();
 
-        while (inputc != 13) {
-            uart_putc(inputc);
-            input[index++] = inputc;
-
+        while (inputc != CR) {
+            // TODO: navigation not implemented here...
+            if (inputc == BS && index > 0) {
+                // dealing with backspace, default behavior is just
+                // going back and overprint the output, so we need 
+                // to print sequence "\b \b" here.
+                uart_write("\b \b", 3);
+                index--;
+            } else if (inputc != BS) {
+                uart_putc(inputc);
+                input[index++] = inputc;
+            }
             inputc = uart_getc();
         }
 
         input[index] = '\0';
 
-    if (strcmp(input, "help") == 0) {
-        printf("\nts - thread status - show running threads and their run times");
-        printf("\nrun <func> - launch a thread function and wait for its completion");
-        printf("\nbg <func> - launch a command in the background");
-        printf("\nshutdown - shutdown the operating system");
+        if (strcmp(input, "help") == 0) {
+            printf("\nts - thread status - show running threads and their run times");
+            printf("\nrun <func> - launch a thread function and wait for its completion");
+            printf("\nbg <func> - launch a command in the background");
+            printf("\nshutdown - shutdown the operating system");
+        } else if (strcmp(input, "ts") == 0) {
+            print_threads_status();
+        } else if (memcmp(input, "run ", RUNSIZE) == 0) {
+            uint32_t command_size = INPUTSIZE - RUNSIZE;
+            char command[command_size];
+            strlcpy(command, &input[RUNSIZE], command_size);
+
+            run_command(command, true);
+        } else if (memcmp(input, "bg ", BGSIZE) == 0) {
+            uint32_t command_size = INPUTSIZE - BGSIZE;
+            char command[command_size];
+            strlcpy(command, &input[BGSIZE], command_size);
+
+            run_command(command, false);
+        } else if (strcmp(input, "shutdown") == 0) {
+            break;
+        } else {
+            printf("\nUnknown command. Enter 'help' for list of commands.");
+        }
     }
-    else if (strcmp(input, "ts") == 0) {
-        print_threads_status();
-    }
-    else if (memcmp(input, "run ", RUNSIZE) == 0) {
-        uint32_t command_size = INPUTSIZE - RUNSIZE;
-        char command[command_size];
-        strlcpy(command, &input[RUNSIZE], command_size);
-        
-        run_command(command, true);
-    }
-    else if (memcmp(input, "bg ", BGSIZE) == 0) {
-        uint32_t command_size = INPUTSIZE - BGSIZE;
-        char command[command_size];
-        strlcpy(command, &input[BGSIZE], command_size);
-        
-        run_command(command, false);
-    }
-    else if (strcmp(input, "shutdown") == 0) {
-        break;
-    }
-    else {
-        printf("\nUnknown command. Enter 'help' for list of commands.");
-    }
-}
 
     printf("\nGoodbye from the osOS shell");
 }
