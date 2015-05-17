@@ -116,7 +116,7 @@ void thread_init(void) {
 
     /* Set up a thread structure for the running thread. */
     initial_thread = get_first_thread();
-    init_thread(initial_thread, "main", PRI_DEFAULT);
+    init_thread(initial_thread, "kinit", PRI_DEFAULT);
     set_status(initial_thread, THREAD_RUNNING);
     initial_thread->tid = allocate_tid();
 }
@@ -173,7 +173,7 @@ void thread_start() {
     /* Creating the idle thread. */
     struct semaphore idle_started;
     sema_init(&idle_started, 0);
-    thread_create("Idle Thread", PRI_MAX, &idle, &idle_started);
+    thread_create("kidle", PRI_MAX, &idle, &idle_started);
 
     // Only Enables the IRQ interruptions, FIQ interruptions remain disable.
     interrupts_enable();
@@ -204,9 +204,7 @@ void thread_wait(tid_t tid) {
         struct thread *running_thread = thread_get_running_thread();
         list_push_back(&(target_thread->waiting_list), &(running_thread->wait_elem));
         // the current thread block until noticed by the target thread. 
-        printf(">>>>>>>>>>>>>>>>>>> yeah! I'm %s and I start waiting!! <<<<<<<<<<<<<<<<<<<<\n", running_thread->name);
         thread_block();
-        printf(">>>>>>>>>>>>>>>>>>> yeah! I'm %s and I'm unblocked!! <<<<<<<<<<<<<<<<<<<<\n", running_thread->name);
     }
     interrupts_set_level(old_level);
 }
@@ -219,7 +217,6 @@ static struct thread *thread_find(tid_t tid) {
     for (; e != list_end(&all_list); e = list_next(e)) {
         struct thread *target = list_entry(e, struct thread, allelem);
         if (target->tid == tid) {
-            printf("thread %s found\n", target->name);
             t = target;
             break;
         }
@@ -356,8 +353,7 @@ void thread_unblock(struct thread *t) {
 
     old_level = interrupts_disable();
     ASSERT(t->status == THREAD_BLOCKED);
-    
-    list_push_back(&ready_lists[t->priority], &t->elem);    
+    list_push_back(&ready_list, &t->elem);
     set_status(t, THREAD_READY);
     interrupts_set_level(old_level);
 }
@@ -399,7 +395,8 @@ void thread_exit(void) {
        and schedule another process.  That process will destroy us
        when it calls thread_schedule_tail(). */
     interrupts_disable();
-    printf("\n%s thread exiting", thread_current()->name);
+    struct thread *t = thread_current();
+    printf("\nI'm %s and I'm DYING!!!\n", t->name);
     /* first we unblock all waiting threads, we need to do this before we 
      * actually kill the target thread. */
     thread_unblock_waiting_threads(thread_current());
@@ -723,4 +720,12 @@ void set_status(struct thread *t, enum thread_status new_status) {
             t->total_runtime += time - time_at_status;
         }
     }
+}
+
+int thread_num_threads(void) {
+    return list_size(&all_list);
+}
+
+int thread_num_ready_threads(void) {
+    return list_size(&ready_list);
 }

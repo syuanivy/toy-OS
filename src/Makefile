@@ -116,7 +116,8 @@ MISC_OBJ    = $(patsubst $(MISC)%.c, $(BUILD)%.o, $(MISC_SRC))
 C_OBJECTS   = $(DEVICES_OBJ) \
 	      $(LIB_OBJ) \
 	      $(KERNEL_OBJ) \
-	      $(THREADS_OBJ)
+	      $(THREADS_OBJ) \
+	      $(MISC_OBJ)
 
 # Rule to make the elf file.
 $(BUILD)output.elf : $(BUILD) $(OBJECTS) $(C_OBJECTS) $(LINKER)
@@ -149,6 +150,11 @@ $(KERNEL_OBJ) : $(BUILD)%.o : $(LIB_KERNEL)%.c
 	$(ARMGNU)-gcc $(INCL) $(CFLAGS) -c $< -o $@
 	
 $(THREADS_OBJ) : $(BUILD)%.o : $(THREADS)%.c
+	@echo
+	@echo "=============== Generating $@ ==============="
+	$(ARMGNU)-gcc $(INCL) $(CFLAGS) -c $< -o $@
+	
+$(MISC_OBJ) : $(BUILD)%.o : $(MISC)%.c
 	@echo
 	@echo "=============== Generating $@ ==============="
 	$(ARMGNU)-gcc $(INCL) $(CFLAGS) -c $< -o $@

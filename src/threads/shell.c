@@ -4,6 +4,7 @@
  *  Created on: May 10, 2015
  *      Author: rreeves
  */
+<<<<<<< HEAD
  
  #include <stdio.h>
  #include <string.h>
@@ -15,6 +16,24 @@
  
  static char* get_thread_status(enum thread_status status) {
      
+=======
+
+#include <stdio.h>
+#include <string.h>
+#include "thread.h"
+#include "interrupt.h"
+#include "shell.h"
+#include "serial.h"
+#include "timer.h"
+#include "thread_wait_demo.h"
+
+void task_shell(void *param UNUSED) {
+    run_shell();
+}
+
+static char* get_thread_status(enum thread_status status) {
+
+>>>>>>> 9cb15fce8209cf30ccd016283c045668270d6d84
     switch (status) {
         case THREAD_RUNNING:
             return "Running";
@@ -24,6 +43,8 @@
             return "Blocked";
         case THREAD_DYING:
             return "Dying";
+        default:
+            return "Undefined";
     }
  }
  
@@ -43,6 +64,7 @@
  static void print_thread_status(struct thread *t, void *param UNUSED) {
      
     uint32_t time = timer_get_timestamp();
+<<<<<<< HEAD
      
     printf("\n%d, %s, %s, %u, %u, %u", 
         t->tid, 
@@ -52,12 +74,32 @@
         get_total_alivetime(t, time),
         t->priority
     );
+=======
+    printf("\n%-15d\t%-15s\t%-15s\t%-15u\t%-15u",
+            t->tid,
+            strlen(t->name) > 0 ? t->name : "[No Name]",
+            get_thread_status(t->status),
+            get_total_runtime(t, time),
+            get_total_alivetime(t, time)
+            );
+>>>>>>> 9cb15fce8209cf30ccd016283c045668270d6d84
 }
 
 static void print_threads_status() {
     enum interrupts_level old_level = interrupts_disable();
+<<<<<<< HEAD
     
     printf("\nThread ID, Name, Status, Total run time (ms), Total alive time (ms), Priority");
+=======
+    printf("\n-----------------------------------------------------"
+            "----------------------");
+    printf("\nTotal Thread(s): %u", thread_num_threads());
+    printf("\nTotal Ready Thread(s): %u", thread_num_ready_threads());
+    printf("\n-----------------------------------------------------"
+            "----------------------");
+    printf("\n%-15s\t%-15s\t%-15s\t%-15s\t%-15s",
+            "TID", "NAME", "STATUS", "RTIME(ms)", "ATIME(ms)");
+>>>>>>> 9cb15fce8209cf30ccd016283c045668270d6d84
     thread_foreach(&print_thread_status, NULL);
     
     interrupts_set_level(old_level);
@@ -72,6 +114,7 @@ void run_command(char *command, bool block) {
     
     if (strcmp(command, "test") == 0) {
         func = &test;
+<<<<<<< HEAD
     }
     else if (strcmp(command, "priority") == 0) {
         func = &priority_ex;
@@ -81,6 +124,14 @@ void run_command(char *command, bool block) {
         printf("\ntest - for debugging only");
         printf("\npriority - demonstrates thread prioritization");
         
+=======
+    } else if (strcmp(command, "thread_wait_demo") == 0) {
+        func = &thread_wait_demo;
+    } else {
+        printf("\nAvailable commands:");
+        printf("\ntest - for debugging only");
+        printf("\nthread_wait_demo - for debugging only");
+>>>>>>> 9cb15fce8209cf30ccd016283c045668270d6d84
         return;
     }
     
@@ -101,9 +152,12 @@ void run_shell() {
         memset(input, 0, INPUTSIZE);
         int index = 0;
 
+<<<<<<< HEAD
         uart_puts("\nosO$ "); 
+=======
+        uart_puts("\nosOS$ ");
+>>>>>>> 9cb15fce8209cf30ccd016283c045668270d6d84
         char inputc = uart_getc();
-
         while (inputc != CR) {
             // TODO: navigation not implemented here...
             if (inputc == BS && index > 0) {
@@ -118,7 +172,6 @@ void run_shell() {
             }
             inputc = uart_getc();
         }
-
         input[index] = '\0';
 
         if (strcmp(input, "help") == 0) {
