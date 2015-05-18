@@ -8,7 +8,7 @@
 static tid_t target_tid = 0;
 static struct lock step_lock;
 void thread_wait_demo(void *param UNUSED) {
-    printf("\n===== Thread Wait Demo Initializing =====\n");
+    printf("\n===== Thread Wait Demo Initializing Start =====\n");
     lock_init(&step_lock);
     target_tid = thread_create("kdemo_target", PRI_MAX, &task_target, NULL);
     thread_create("kdemo_waiter1", PRI_MAX, &task_waiter1, &target_tid);

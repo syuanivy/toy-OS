@@ -84,5 +84,5 @@ void init() {
 }
 
 static void init_shell() {
-    thread_create("kshell", PRI_MAX, &task_shell, NULL);
+    thread_create("kshell", PRI_DEFAULT, &task_shell, NULL);
 }

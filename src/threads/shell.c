@@ -66,11 +66,11 @@ static void print_threads_status() {
     enum interrupts_level old_level = interrupts_disable();
 
     printf("\n-----------------------------------------------------"
-            "----------------------");
+            "-------------------------------------");
     printf("\nTotal Thread(s): %u", thread_num_threads());
     printf("\nTotal Ready Thread(s): %u", thread_num_ready_threads());
     printf("\n-----------------------------------------------------"
-            "----------------------");
+            "-------------------------------------");
     printf("\n%-15s\t%-15s\t%-15s\t%-15s\t%-15s\t%-15s",
             "TID", "NAME", "STATUS", "PRIORITY", "RTIME(ms)", "ATIME(ms)");
 
@@ -86,29 +86,29 @@ void run_command(char *command, bool block) {
     void *param;
     int32_t priority = PRI_DEFAULT;
     
-    if (strcmp(command, "test") == 0) {
-        func = &test;
+    if (strcmp(command, "priority_exec") == 0) {
+        func = &priority_exec;
+        priority = PRI_MAX;
     }
-    else if (strcmp(command, "priority") == 0) {
-        func = &priority_ex;
+    else if (strcmp(command, "priority_takeover") == 0) {
+        func = &priority_takeover;
     }
     else if (strcmp(command, "thread_wait_demo") == 0) {
         func = &thread_wait_demo;
     }
     else {
         printf("\nAvailable commands:");
-        printf("\ntest - for debugging only");
-        printf("\npriority - demonstrates thread prioritization");
-        printf("\nthread_wait_demo - for debugging only");
+        printf("\npriority_exec - demonstrates thread execution order based on priority");
+        printf("\npriority_takeover - demonstrates a higher priority thread takes over if a lower priority thread is running");
+        printf("\nthread_wait_demo - demonstrates thread waiting");
         
         return;
     } 
     
+    uint32_t thread_id = thread_create(command, priority, func, param);
+    
     if (block) {
-        func(param);
-    }
-    else {
-        thread_create(command, priority, func, param);
+        thread_wait(thread_id);
     }
 }
 

@@ -320,6 +320,11 @@ tid_t thread_create(const char *name, int32_t priority,
 
     /* Add to run queue. */
     thread_unblock(thread);
+    
+    //If the priority of the new thread is higher yield so that it can be scheduled
+    if (priority > thread_current()->priority) {
+        thread_yield();
+    }
 
     return tid;
 }
