@@ -52,10 +52,11 @@ static char* get_thread_status(enum thread_status status) {
      
     uint32_t time = timer_get_timestamp();
     
-    printf("\n%-15d\t%-15s\t%-15s\t%-15u\t%-15u",
+    printf("\n%-15d\t%-15s\t%-15s\t%-15u\t%-15u\t%-15u",
             t->tid,
             strlen(t->name) > 0 ? t->name : "[No Name]",
             get_thread_status(t->status),
+            t->priority,
             get_total_runtime(t, time),
             get_total_alivetime(t, time)
     );
@@ -70,8 +71,8 @@ static void print_threads_status() {
     printf("\nTotal Ready Thread(s): %u", thread_num_ready_threads());
     printf("\n-----------------------------------------------------"
             "----------------------");
-    printf("\n%-15s\t%-15s\t%-15s\t%-15s\t%-15s",
-            "TID", "NAME", "STATUS", "RTIME(ms)", "ATIME(ms)");
+    printf("\n%-15s\t%-15s\t%-15s\t%-15s\t%-15s\t%-15s",
+            "TID", "NAME", "STATUS", "PRIORITY", "RTIME(ms)", "ATIME(ms)");
 
     thread_foreach(&print_thread_status, NULL);
     
