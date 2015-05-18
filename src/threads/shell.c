@@ -96,11 +96,16 @@ void run_command(char *command, bool block) {
     else if (strcmp(command, "thread_wait_demo") == 0) {
         func = &thread_wait_demo;
     }
+    else if (strcmp(command, "loop") == 0) {
+        func = &loop;
+        param = "Loop";
+    }
     else {
         printf("\nAvailable commands:");
         printf("\npriority_exec - demonstrates thread execution order based on priority");
         printf("\npriority_takeover - demonstrates a higher priority thread takes over if a lower priority thread is running");
         printf("\nthread_wait_demo - demonstrates thread waiting");
+        printf("\nloop - loops and sleeps at default priority"); //demo non-busy sleep. run and then execute ts while it runs.
         
         return;
     } 
