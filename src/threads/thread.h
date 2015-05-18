@@ -111,9 +111,9 @@ struct thread {
   /* wait element */
   struct list_elem wait_elem;
 
-  /* sleep element */
+  /* sleep element for non-busy wait*/
   struct list_elem sleep_elem;
-  /* wakeup time, only relevent for threads in sleep_list */
+  /* wakeup time for non-busy wait, only relevent for threads in sleep_list in timer.c */
   int wakeup_time;
 
   /* Owned by thread.c. */
