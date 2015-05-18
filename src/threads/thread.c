@@ -729,6 +729,14 @@ int thread_num_threads(void) {
 int thread_num_ready_threads(void) {
     int total_threads = 0;
     
+    int i;
+    for (i = 0; i < PRI_MAX + 1; i++) {
+        total_threads += list_size(&ready_lists[i]);
+    }
+    
+    if (idle_thread->status == THREAD_READY) {
+        total_threads++;
+    }
+    
     return total_threads;
-    //return list_size(&ready_list);
 }
