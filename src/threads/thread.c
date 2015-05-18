@@ -396,7 +396,6 @@ void thread_exit(void) {
        when it calls thread_schedule_tail(). */
     interrupts_disable();
     struct thread *t = thread_current();
-    printf("\nI'm %s and I'm DYING!!!\n", t->name);
     /* first we unblock all waiting threads, we need to do this before we 
      * actually kill the target thread. */
     thread_unblock_waiting_threads(thread_current());
