@@ -1,5 +1,6 @@
 #include <stdio.h>
 
+#include "timer.h"
 #include "synch.h"
 #include "timer_demo.h"
 #include "thread.h"
@@ -9,31 +10,30 @@ static struct lock lock_task_busy;
 static struct lock lock_task_nonbusy;
 
 static void task_busy_sleeper(void *param UNUSED) {
-  int delay = param;
+  int *delay = param;
   
   enum interrupts_level old_level = interrupts_disable();
-  printf("\nI'm the busy sleeper and I will fall asleep for  %d microseconds\n", delay);
+  printf("\nI'm the busy sleeper and I will fall asleep for  %d microseconds\n", *delay);
   interrupts_set_level(old_level);
 
-  timer_msleep(delay);
+  timer_msleep(*delay);
 
   old_level = interrupts_disable();
-  printf("\nI'm the busy sleeper and now I wake up after %d microseconds\n", delay);
+  printf("\nI'm the busy sleeper and now I wake up after %d microseconds\n", *delay);
   interrupts_set_level(old_level);
-
 }
 
 static void task_nonbusy_sleeper(void *param UNUSED) {
-  int delay = param;
+  int *delay = param;
 
   enum interrupts_level old_level = interrupts_disable();
-  printf("\nI'm the non busy sleeper and I will fall asleep for %d microseconds\n", delay);
+  printf("\nI'm the non busy sleeper and I will fall asleep for %d microseconds\n", *delay);
   interrupts_set_level(old_level);
 
-  timer_msleep_nonbusy(delay);
+  timer_msleep_nonbusy(*delay);
 
   old_level = interrupts_disable();
-  printf("\nI'm the non busy sleeper and now I wake up after %d microseconds\n", delay);
+  printf("\nI'm the non busy sleeper and now I wake up after %d microseconds\n", *delay);
   interrupts_set_level(old_level);
 }
 
@@ -55,17 +55,19 @@ static void task_runner(void *param UNUSED) {
   printf("\nTotal cost : %d microseconds!\n", end-start);
 }
 
-void init_busy_test(int delay) {
+void init_busy_test(void *param UNUSED) {
+    int delay = 1000000;
     lock_init(&lock_task_busy);
 
-    thread_create("busy sleeper", PRI_MAX, &task_busy_sleeper, delay);
+    thread_create("busy sleeper", PRI_MAX, &task_busy_sleeper, &delay);
     thread_create("awake runner", PRI_MAX, &task_runner, NULL);
 }
 
-void init_nonbusy_test(int delay) {
+void init_nonbusy_test(void *param UNUSED) {
+    int delay = 1000000;
     lock_init(&lock_task_nonbusy);
 
-    thread_create("non busy sleeper", PRI_MAX, &task_nonbusy_sleeper, delay);
+    thread_create("non busy sleeper", PRI_MAX, &task_nonbusy_sleeper, &delay);
     thread_create("awake runner", PRI_MAX, &task_runner, NULL);
 }
 

@@ -184,6 +184,21 @@ void thread_start() {
     sema_down(&idle_started);
 }
 
+/* find and return the thread with tid. */
+static struct thread *thread_find(tid_t tid) {
+    ASSERT(interrupts_get_level() == INTERRUPTS_OFF);
+    struct thread *t = NULL;
+    struct list_elem *e = list_begin(&all_list);
+    for (; e != list_end(&all_list); e = list_next(e)) {
+        struct thread *target = list_entry(e, struct thread, allelem);
+        if (target->tid == tid) {
+            t = target;
+            break;
+        }
+    }
+    return t;
+}
+
 /**
  * This function suspends the execution of the calling thread until the
  * target thread is terminated, unless the current thread has already been
@@ -209,21 +224,6 @@ void thread_wait(tid_t tid) {
         thread_block();
     }
     interrupts_set_level(old_level);
-}
-
-/* find and return the thread with tid. */
-static struct thread *thread_find(tid_t tid) {
-    ASSERT(interrupts_get_level() == INTERRUPTS_OFF);
-    struct thread *t = NULL;
-    struct list_elem *e = list_begin(&all_list);
-    for (; e != list_end(&all_list); e = list_next(e)) {
-        struct thread *target = list_entry(e, struct thread, allelem);
-        if (target->tid == tid) {
-            t = target;
-            break;
-        }
-    }
-    return t;
 }
 
 /* Called by the timer interrupt handler at each timer tick.
@@ -392,6 +392,17 @@ tid_t thread_tid(void) {
     return thread_current()->tid;
 }
 
+static void thread_unblock_waiting_threads(struct thread *t) {
+    // iterate through all list elements, and unblock threads according
+    // to insertion order.
+    struct list_elem *elem = list_begin(&(t->waiting_list));
+    if (elem == NULL) return;// we need to return here for empty list...
+    for (; elem != list_end(&(t->waiting_list)); elem = list_next(elem)) {
+        struct thread *waiting_thread = list_entry(elem, struct thread, wait_elem);
+        thread_unblock(waiting_thread);
+    }
+}
+
 /* Deschedules the current thread and destroys it.  Never
    returns to the caller. */
 void thread_exit(void) {
@@ -410,17 +421,6 @@ void thread_exit(void) {
     set_status(thread_current(), THREAD_DYING);
     schedule();
     NOT_REACHED();
-}
-
-static void thread_unblock_waiting_threads(struct thread *t) {
-    // iterate through all list elements, and unblock threads according
-    // to insertion order.
-    struct list_elem *elem = list_begin(&(t->waiting_list));
-    if (elem == NULL) return;// we need to return here for empty list...
-    for (; elem != list_end(&(t->waiting_list)); elem = list_next(elem)) {
-        struct thread *waiting_thread = list_entry(elem, struct thread, wait_elem);
-        thread_unblock(waiting_thread);
-    }
 }
 
 /* Yields the CPU.  The current thread is not put to sleep and

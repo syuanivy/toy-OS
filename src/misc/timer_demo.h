@@ -13,8 +13,8 @@ extern "C" {
 #endif
     
 /*Tasks for Testing Non-busy Waiting*/
-void init_busy_test(int delay);
-void init_nonbusy_test(int delay);
+void init_busy_test(void *);
+void init_nonbusy_test(void *);
 
 #ifdef	__cplusplus
 }
