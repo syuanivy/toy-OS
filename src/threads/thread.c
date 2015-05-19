@@ -40,7 +40,8 @@ extern void save_and_switch_context(struct interrupts_stack_frame *cur_stack_fra
 
 /* List of processes in THREAD_READY state, that is, processes
    that are ready to run but not actually running. */
-static struct list ready_list;
+static struct list ready_lists[PRI_MAX + 1];
+
 /* List of all processes.  Processes are added to this list
    when they are first scheduled and removed when they exit. */
 static struct list all_list;
@@ -108,12 +109,16 @@ void thread_init(void) {
     user_ticks = 0;
 
     lock_init(&tid_lock);
-    list_init(&ready_list);
     list_init(&all_list);
+    
+    int i;
+    for (i = 0; i <= PRI_MAX; i++) {
+        list_init(&ready_lists[i]);
+    }
 
     /* Set up a thread structure for the running thread. */
     initial_thread = get_first_thread();
-    init_thread(initial_thread, "main", PRI_DEFAULT);
+    init_thread(initial_thread, "kinit", PRI_DEFAULT);
     set_status(initial_thread, THREAD_RUNNING);
     initial_thread->tid = allocate_tid();
 }
@@ -170,7 +175,7 @@ void thread_start() {
     /* Creating the idle thread. */
     struct semaphore idle_started;
     sema_init(&idle_started, 0);
-    thread_create("Idle Thread", PRI_MAX, &idle, &idle_started);
+    thread_create("kidle", PRI_MAX, &idle, &idle_started);
 
     // Only Enables the IRQ interruptions, FIQ interruptions remain disable.
     interrupts_enable();
@@ -201,9 +206,7 @@ void thread_wait(tid_t tid) {
         struct thread *running_thread = thread_get_running_thread();
         list_push_back(&(target_thread->waiting_list), &(running_thread->wait_elem));
         // the current thread block until noticed by the target thread. 
-        printf(">>>>>>>>>>>>>>>>>>> yeah! I'm %s and I start waiting!! <<<<<<<<<<<<<<<<<<<<\n", running_thread->name);
         thread_block();
-        printf(">>>>>>>>>>>>>>>>>>> yeah! I'm %s and I'm unblocked!! <<<<<<<<<<<<<<<<<<<<\n", running_thread->name);
     }
     interrupts_set_level(old_level);
 }
@@ -216,7 +219,6 @@ static struct thread *thread_find(tid_t tid) {
     for (; e != list_end(&all_list); e = list_next(e)) {
         struct thread *target = list_entry(e, struct thread, allelem);
         if (target->tid == tid) {
-            printf("thread %s found\n", target->name);
             t = target;
             break;
         }
@@ -320,6 +322,11 @@ tid_t thread_create(const char *name, int32_t priority,
 
     /* Add to run queue. */
     thread_unblock(thread);
+    
+    //If the priority of the new thread is higher yield so that it can be scheduled
+    if (priority > thread_current()->priority) {
+        thread_yield();
+    }
 
     return tid;
 }
@@ -353,7 +360,7 @@ void thread_unblock(struct thread *t) {
 
     old_level = interrupts_disable();
     ASSERT(t->status == THREAD_BLOCKED);
-    list_push_back(&ready_list, &t->elem);
+    list_push_back(&ready_lists[t->priority], &t->elem);  
     set_status(t, THREAD_READY);
     interrupts_set_level(old_level);
 }
@@ -395,7 +402,7 @@ void thread_exit(void) {
        and schedule another process.  That process will destroy us
        when it calls thread_schedule_tail(). */
     interrupts_disable();
-    printf("\nDying slowly ---------------------------------- %s", thread_current()->name);
+    struct thread *t = thread_current();
     /* first we unblock all waiting threads, we need to do this before we 
      * actually kill the target thread. */
     thread_unblock_waiting_threads(thread_current());
@@ -427,8 +434,9 @@ void thread_yield() {
 
     old_level = interrupts_disable();
     if (cur != idle_thread) {
-        list_push_back(&ready_list, &cur->elem);
+        list_push_back(&ready_lists[cur->priority], &cur->elem);
     }
+    
     set_status(cur, THREAD_READY);
     schedule();
     interrupts_set_level(old_level);
@@ -624,11 +632,20 @@ static bool is_thread(struct thread *t) {
  * the run queue.) If the run queue is empty, return idle_thred.
  */
 static struct thread* thread_get_next_thread_to_run(void) {
-    if (list_empty(&ready_list)) {
-        return idle_thread;
-    } else {
-        return list_entry(list_pop_front(&ready_list), struct thread, elem);
+
+    struct thread *next_thread = idle_thread;
+    
+    int i;
+    for (i = PRI_MAX; i >= 0; i--) {
+        struct list *thread_list = &ready_lists[i];
+        
+        if (!list_empty(thread_list)) {
+            next_thread = list_entry(list_pop_front(thread_list), struct thread, elem);
+            break;
+        }
     }
+    
+    return next_thread;
 }
 
 static void thread_save_stack_frame(struct thread* thread, struct interrupts_stack_frame* stack_frame) {
@@ -709,4 +726,23 @@ void set_status(struct thread *t, enum thread_status new_status) {
             t->total_runtime += time - time_at_status;
         }
     }
+}
+
+int thread_num_threads(void) {
+    return list_size(&all_list);
+}
+
+int thread_num_ready_threads(void) {
+    int total_threads = 0;
+    
+    int i;
+    for (i = 0; i < PRI_MAX + 1; i++) {
+        total_threads += list_size(&ready_lists[i]);
+    }
+    
+    if (idle_thread->status == THREAD_READY) {
+        total_threads++;
+    }
+    
+    return total_threads;
 }

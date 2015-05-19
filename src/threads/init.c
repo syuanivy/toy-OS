@@ -25,11 +25,7 @@
 static size_t user_page_limit = SIZE_MAX;
 
 /* Tasks for the Threads. */
-static void task_1(void *);
-static void task_2(void *);
-static void task_3(void *);
-static void task_shell(void *);
-static void init_all_threads();
+static void init_shell();
 static struct lock lock_task;
 
 /*Tasks for Testing Non-busy Waiting*/
@@ -86,53 +82,19 @@ void init() {
     /* Starts preemptive thread scheduling by enabling interrupts. */
     thread_start();
 
+    init_shell();
 
-
-    init_nonbusy_test(1000000);
-
-    /*this has a while(true) loop and will solve the idle thread issue
-      also it stops the output at osO$ nicely.*/
-   // run_shell();
-    int i = 0;
-    while(true){
-      i++;
+    while (true) {
+        // never let idle thread run
+        timer_msleep(1);
     }
 
 
     thread_exit();
 }
 
-
-tid_t tmp_tid = 0;
-
-static void init_all_threads() {
-    lock_init(&lock_task);
-    //    tmp_tid = thread_create("Super Duper", PRI_MAX, &task_1, NULL);
-    //    thread_create("Burger King", PRI_MAX, &task_2, &tmp_tid);
-    //    thread_create("In and Out", PRI_MAX, &task_3, &tmp_tid);
-    thread_create("Task Shell", PRI_MAX, &task_shell, NULL);
-}
-
-static void task_1(void *param UNUSED) {
-    int i = 0;
-    while (i < 100) {
-        printf("yeah~I'm the target!\n");
-        ++i;
-    }
-}
-
-static void task_2(void *param UNUSED) {
-    tid_t *target_tid = param;
-    thread_wait(*target_tid);
-}
-
-static void task_3(void *param UNUSED) {
-    tid_t *target_tid = param;
-    thread_wait(*target_tid);
-}
-
-static void task_shell(void *param UNUSED) {
-    run_shell();
+static void init_shell() {
+    thread_create("kshell", PRI_DEFAULT, &task_shell, NULL);
 }
 
 static void init_busy_test(int delay) {

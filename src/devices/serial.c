@@ -10,10 +10,10 @@
 #include "interrupt.h"
 #include "thread.h"
 
-volatile static unsigned int rxhead;
-volatile static unsigned int rxtail;
 #define RXBUFMASK 0xFFF// a buffer of 4095 bytes at max
-volatile static unsigned char rxbuffer[RXBUFMASK + 1];
+volatile static unsigned int input_head;
+volatile static unsigned int input_tail;
+volatile static unsigned char input_buffer[RXBUFMASK + 1];
 
 static struct thread *uart_blocking_thread = NULL;
 
@@ -108,14 +108,20 @@ enum {
 
 /* uart interrupt handler */
 static void uart_irq_handler(struct interrupts_stack_frame *stack_frame) {
+    // we only deal with masked interrupts here.
+    uint32_t masked_irq_status = mmio_read(UART0_MIS);
     // using receive timeout interrupt for unbuffered input.
-    
-    // receive interrupt triggered.
-    if ((mmio_read(UART0_MIS) & (1 << 6)) == 0x40) {
+    if ((masked_irq_status & (1 << 6)) == 0x40) {
         int c = mmio_read(UART0_DR);
-        rxbuffer[rxhead] = c & 0xFF; // put one byte into buffer
-        rxhead = (rxhead + 1) & RXBUFMASK;
-        if (uart_blocking_thread != NULL && uart_blocking_thread->status == THREAD_BLOCKED) {
+        // looks like the key mapping for BCM2835 is not work as expected,
+        // manually map keystrokes for backspace here.
+        if (c == 0x7F) {
+            c = 0x08;//BS
+        }
+        input_buffer[input_head] = c & 0xFF;
+        input_head = (input_head + 1) & RXBUFMASK;
+        if (uart_blocking_thread != NULL && 
+                uart_blocking_thread->status == THREAD_BLOCKED) {
             thread_unblock(uart_blocking_thread);
         }
     }
@@ -154,10 +160,10 @@ void uart_init() {
     // Enable FIFO & 8 bit data transmission (1 stop bit, no parity).
     mmio_write(UART0_LCRH, (1 << 4) | (1 << 5) | (1 << 6));
 
-    // Mask all interrupts.
+    // Mask RXIM, TXIM, RTIM, this determines which interrupt
+    // is enabled. (Even if we don't enable it, we still can get it in
+    // the RIS register.)
     mmio_write(UART0_IMSC, (1 << 4) | (1 << 6));
-//    mmio_write(UART0_IMSC, (1 << 1) | (1 << 4) | (1 << 5) | (1 << 6) |
-//            (1 << 7) | (1 << 8) | (1 << 9) | (1 << 10));
 
     // FIFO receive interrupt trigger level (1/8))
     //    mmio_write(UART0_IFLS, UART0_IFLS & 0xffffff37);
@@ -169,10 +175,17 @@ void uart_init() {
     interrupts_register_irq(IRQ_UART, uart_irq_handler, "UART Interrupt");
 }
 
+/* Interrupt-Driven Output Routine 
+ * This function simply puts output character
+ * into the output buffer. Interrupt handler will
+ * manage to output those buffered characters 
+ * to the serial port. This function acts as a producer
+ * of the output buffer. The current version is not
+ * very robust, since we are not dealing with overflow
+ * here.
+ */
 void uart_putc_helper(unsigned char byte) {
-    // Wait for UART to become ready to transmit.
-    while (mmio_read(UART0_FR) & (1 << 5)) {
-    }
+    while ( mmio_read(UART0_FR) & (1 << 5) ) { }
     mmio_write(UART0_DR, byte);
 }
 
@@ -185,26 +198,33 @@ void uart_putc(unsigned char byte) {
     }
 }
 
-// Test using screen /dev/cu.PL2303-00001004 115200
-
+/* Interrupt-Driven Input Routine 
+ * This function blocks when no data available in the 
+ * input buffer, until the interrupt handler puts data
+ * into the buffer and unblock the blocked thread. This
+ * function acts as a consumer of the input buffer. The
+ * current version is not robust because we are not 
+ * dealing with overflow here.
+ */
 unsigned char uart_getc() {
     // if the buffer is not empty, return data,
     // else block. the current thread will only be woke up
     // by uart interrupt handler.
     // for now we should only use this function in the thread running shell.
-    if (rxtail == rxhead) {
+    if (input_tail == input_head) {
         // IMPORTANT: setup our blocking thread variable before blocking.
         uart_blocking_thread = thread_current();
         // disable interrupt and block the current thread.
         interrupts_disable();
         thread_block();
     }
-    unsigned char c = rxbuffer[rxtail];
-    rxtail = (rxtail + 1) & RXBUFMASK;
+    // consume one character (byte)
+    unsigned char c = input_buffer[input_tail];
+    input_tail = (input_tail + 1) & RXBUFMASK;
     return c;
 }
 
-void uart_write(const unsigned char* buffer, size_t size) {
+void uart_write(const char* buffer, size_t size) {
     size_t i;
     for (i = 0; i < size; i++)
         uart_putc(buffer[i]);
