@@ -14,6 +14,7 @@
 #include "timer.h"
 #include "examples.h"
 #include "thread_wait_demo.h"
+#include "timer_demo.h"
 
 void task_shell(void *param UNUSED) {
     run_shell();
@@ -95,6 +96,12 @@ void run_command(char *command, bool block) {
     }
     else if (strcmp(command, "thread_wait_demo") == 0) {
         func = &thread_wait_demo;
+    }
+    else if (strcmp(command, "init_busy_test") == 0) {
+        func = &init_busy_test;
+    }
+    else if (strcmp(command, "init_nonbusy_test") == 0) {
+        func = &init_nonbusy_test;
     }
     else if (strcmp(command, "loop") == 0) {
         func = &loop;
