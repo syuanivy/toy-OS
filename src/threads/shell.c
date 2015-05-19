@@ -113,7 +113,10 @@ void run_command(char *command, bool block) {
         printf("\npriority_takeover - demonstrates a higher priority thread takes over if a lower priority thread is running");
         printf("\nthread_wait_demo - demonstrates thread waiting");
         printf("\nloop - loops and sleeps at default priority"); //demo non-busy sleep. run and then execute ts while it runs.
-        
+        printf("\nthread_wait_demo - demonstrates two thread wait for another thread finish");
+        printf("\ninit_busy_test - demonstrates busy-waiting sleep");
+        printf("\ninit_nonbusy_test - demonstrates non-busy-waiting sleep");
+
         return;
     } 
     
