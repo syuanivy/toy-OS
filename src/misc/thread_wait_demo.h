@@ -1,6 +1,6 @@
 /* 
  * File:   thread_wait_demo.h
- * Author: Hanzhou Shi <hanzhou87 at gmail.com>
+ * Author: Hanzhou Shi <hanzhou87@gmail.com>
  *
  * Created on May 17, 2015, 10:48 AM
  */
