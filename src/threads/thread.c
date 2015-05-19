@@ -38,6 +38,8 @@ extern void save_and_switch_context(struct interrupts_stack_frame *cur_stack_fra
    of thread.h for details. */
 #define THREAD_MAGIC 0xcd6abf4b
 
+/* List of processes in THREAD_READY state, that is, processes
+   that are ready to run but not actually running. */
 static struct list ready_lists[PRI_MAX + 1];
 
 /* List of all processes.  Processes are added to this list

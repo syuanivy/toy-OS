@@ -111,9 +111,15 @@ struct thread {
   /* wait element */
   struct list_elem wait_elem;
 
+  /* sleep element for non-busy wait*/
+  struct list_elem sleep_elem;
+  /* wakeup time for non-busy wait, only relevent for threads in sleep_list in timer.c */
+  int wakeup_time;
+
   /* Owned by thread.c. */
   uint32_t magic;               /* Detects stack overflow. */
 };
+
 
 void thread_init(void);
 void thread_start();

@@ -24,6 +24,9 @@ struct bcm2835_system_timer_registers {
   volatile unsigned int C3;  /** System Timer Compare 3 */
 };
 
+/* List of all sleeping threads, non busy waiting for the */
+static struct list sleep_list;
+
 /* Pointer to the timer registers. */
 static volatile struct bcm2835_system_timer_registers * const timer_registers =
         (volatile struct bcm2835_system_timer_registers*) SYSTEM_TIMER_REGISTERS_BASE;
@@ -39,6 +42,7 @@ static void timer_set_interval(int timer_compare, int milliseconds);
 
 void timer_init() {
   interrupts_register_irq(IRQ_1, timer_irq_handler, "Timer Interrupt");
+  list_init(&sleep_list); //for non-busy wait
   timer_set_interval(IRQ_1, TIMER_PERIODIC_INTERVAL);
 }
 
@@ -57,9 +61,25 @@ void timer_msleep(int milliseconds) {
   // Implements busy waiting
   int startTime = timer_get_timestamp();
   int elapseTime = timer_get_timestamp() - startTime;
+
   while (milliseconds > elapseTime) {
       elapseTime = timer_get_timestamp() - startTime;
   }
+
+}
+
+//Non busy waiting implementation of timer_msleep()
+void timer_msleep_nonbusy(int microseconds){
+  enum interrupts_level old_level = interrupts_disable();
+
+  struct thread *running_thread = thread_current();
+
+  running_thread->wakeup_time = timer_get_timestamp() + microseconds;
+  list_push_back(&sleep_list, &(running_thread->sleep_elem));
+  thread_block();
+
+  interrupts_set_level(old_level);
+
 }
 
 /* Resets the System Timer Compare register (C0-C3) )in the Timer Control/Status register.
@@ -87,14 +107,33 @@ static void timer_irq_handler(struct interrupts_stack_frame *stack_frame) {
   // The System Timer compare has to be reseted after the timer interrupt.
   timer_reset_timer_compare(IRQ_1);
 
-  thread_tick(stack_frame);
+  timer_wakeup(); //non busy wait wakeup
 
-  //timer_msleep(1000000);
-//  timer_msleep(300000);
+  thread_tick(stack_frame);
 
   // The System Timer compare register has to be set up with the new time after the timer interrupt.
   timer_set_interval(IRQ_1, TIMER_PERIODIC_INTERVAL);
 }
+
+/* Called by timer_irq_handler to wake up sleeping threads*/
+void timer_wakeup(){
+
+  struct list_elem *elem = list_begin(&sleep_list);
+
+  if (elem == NULL) return;
+  for (; elem != list_end(&sleep_list); elem = list_next(elem)) {
+
+      struct thread *sleeping_thread = list_entry(elem, struct thread, sleep_elem);
+
+      if(sleeping_thread->wakeup_time <= timer_get_timestamp()){
+        printf("\n >>>>>>>>>>>>>>>>>>wake up %s at %d<<<<<<<<<<<<<<<<<<<<<\n", sleeping_thread->name, sleeping_thread->wakeup_time );
+        thread_unblock(sleeping_thread);
+        list_remove(elem);
+        sleeping_thread->wakeup_time = -1;
+      }       
+  }  
+}
+
 
 /* Sets the periodic interval of the timer.
  * Set the timestamp value in the BCM2835 System timer. The interface to the BCM2835 System Timer
